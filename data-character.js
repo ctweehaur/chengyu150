@@ -121,7 +121,6 @@ const characterIdioms = [
     },
     {
         idiom: "气势汹汹",
-        pinyin: "qì饰汹汹",
         pinyin: "qì shì xiōng xiōng",
         defZh: "形容气势凶猛，态度非常粗鲁野蛮。",
         defEn: "Aggressive and fierce; in a very angry manner.",
