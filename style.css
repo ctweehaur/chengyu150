@@ -28,7 +28,7 @@
     height: 100%;
 }
 
-/* 5. 终极修复反面镜像：强行把背面在初始状态下水平翻转 180 度 */
+/* 5. 终极修复向反面翻转时的文字镜像镜像倒转问题 */
 #flip-card > div:nth-child(2) {
     transform: rotateY(180deg);
 }
