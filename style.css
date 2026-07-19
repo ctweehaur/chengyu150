@@ -1,42 +1,55 @@
 /* ==========================================================================
-   3D 翻转卡片核心样式
+   3D 闪卡核心翻转架构
    ========================================================================== */
 
-/* 开启容器的 3D 空间视距 */
+/* 1. 为最外层容器开启 3D 视距，数值越大透视效果越平缓 */
 #card-container {
-    perspective: 1000px;
+    perspective: 1200px;
 }
 
-/* 保持子元素在 3D 空间中 */
+/* 2. 核心动画卡片座：负责承载整体旋转 */
 .transform-style-3d {
     transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 隐藏背面，防止翻转时露底 */
-.backface-hidden {
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-}
-
-/* 定义背面的初始翻转角度 */
+/* 3. 当卡片被点击激活时，整体绕 Y 轴旋转 180 度 */
 .rotate-y-180 {
     transform: rotateY(180deg);
 }
 
+/* 4. 正面和背面公用的基础 3D 隔离属性 */
+.backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* 5. 关键修复：强行把背面在初始状态下就水平翻转 180 度！
+   这样当整个卡片座旋转 180 度时，背面负负得正，文字就是绝对清爽的正常顺序，绝不镜像！ */
+#flip-card > div:nth-child(2) {
+    transform: rotateY(180deg);
+}
+
+
 /* ==========================================================================
-   Quiz 交互按钮及防连点全局控制
+   Quiz 测验系统与微调
    ========================================================================== */
 
-/* 当选项按钮被禁用时（答题反馈期间），改变鼠标指针与透明度 */
+/* 答题反馈期间，防止用户反复连点导致切题异常 */
 button:disabled {
     cursor: not-allowed;
     opacity: 0.85;
 }
 
-/* 规整 Ruby 标签在不同浏览器下的默认外边距表现 */
+/* 规范注音组件 (Ruby) 在各款浏览器下的排版表现 */
 ruby {
     ruby-position: over;
 }
+
 rt {
     user-select: none;
 }
