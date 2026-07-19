@@ -41,15 +41,17 @@
                 </div>
             </div>
 
-            <!-- 卡片背面：全新升级的高级极简复古层次排版 -->
+            <!-- 卡片背面：优化后的均匀分布与大字号例句 -->
             <div class="absolute inset-0 bg-orange-50/40 rounded-2xl border-2 border-orange-100/60 shadow-xl shadow-stone-200/50 flex flex-col p-6 backface-hidden overflow-hidden relative">
                 
                 <!-- 内层典雅细线框 -->
                 <div class="absolute inset-2 border border-amber-900/5 rounded-xl pointer-events-none"></div>
 
-                <div class="relative z-10 flex flex-col h-full">
+                <!-- 通过 justify-between 让三大块在纵向完美分布，不再聚在顶部 -->
+                <div class="relative z-10 flex flex-col justify-between h-full py-1">
+                    
                     <!-- 中文释义区块 -->
-                    <div class="mb-3.5">
+                    <div>
                         <div class="inline-flex items-center gap-1 bg-amber-700/10 text-amber-800 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md mb-2">
                             <span>释义</span>
                         </div>
@@ -57,19 +59,19 @@
                     </div>
 
                     <!-- 英文翻译区块 -->
-                    <div class="mb-4">
+                    <div>
                         <div class="inline-flex items-center gap-1 bg-stone-200/60 text-stone-600 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md mb-1.5">
                             <span>TRANSLATION</span>
                         </div>
                         <p id="card-def-en" class="text-xs italic text-stone-500 leading-relaxed pl-1">No English translation available.</p>
                     </div>
 
-                    <!-- 例句区块（沉底且独立精致衬底） -->
-                    <div class="mt-auto bg-white/80 border border-amber-950/5 p-3 rounded-xl shadow-sm">
-                        <div class="inline-flex items-center gap-1 bg-amber-900/5 text-amber-900/70 text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded mb-1.5">
+                    <!-- 例句区块：移除了 mt-auto，加大了字体 (text-[14px]) 并微调了行高 -->
+                    <div class="bg-white/80 border border-amber-950/5 p-3.5 rounded-xl shadow-sm">
+                        <div class="inline-flex items-center gap-1 bg-amber-900/5 text-amber-900/70 text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded mb-2">
                             <span>日常应用</span>
                         </div>
-                        <p id="card-example" class="text-stone-600 text-xs leading-relaxed pl-0.5">暂无例句。</p>
+                        <p id="card-example" class="text-stone-700 text-[14px] font-medium leading-relaxed pl-0.5 tracking-wide">暂无例句。</p>
                     </div>
                 </div>
 
