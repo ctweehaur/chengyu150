@@ -25,9 +25,9 @@ function initApp() {
 
         // 如果是新的一天，或者没有今日计划，则重新生成 10 条
         if (!savedProgress || JSON.parse(savedProgress).date !== todayStr) {
-            // 随机抽取 10 条成语
+            // 随机抽取成语（如果总数小于10，则全取）
             const shuffled = [...allIdioms].sort(() => 0.5 - Math.random());
-            currentPlan = shuffled.slice(0, 10);
+            currentPlan = shuffled.slice(0, Math.min(10, allIdioms.length));
             
             localStorage.setItem('chengyu_progress', JSON.stringify({
                 date: todayStr,
@@ -61,7 +61,7 @@ function initApp() {
 }
 
 // ==========================================
-// 3. 卡片渲染与翻转逻辑（正反面全方位深度兼容）
+// 3. 卡片渲染与翻转逻辑（精准对接 data.js 字段名）
 // ==========================================
 function renderCard() {
     if (currentPlan.length === 0) {
@@ -81,20 +81,14 @@ function renderCard() {
     if (flipCardEl) flipCardEl.classList.remove('rotate-y-180');
     isFlipped = false;
 
-    // 1. 渲染正面：拼音注音 (Ruby)
+    // 1. 渲染正面：拼音注音 (Ruby) -> 大字号显示
     const rubyContainer = document.getElementById('card-idiom-ruby');
     if (rubyContainer) {
-        const idiomText = currentIdiom.idiom || currentIdiom.word || "未知成语";
+        const idiomText = currentIdiom.idiom || "未知成语";
         const pinyinText = currentIdiom.pinyin || "";
 
-        if (currentIdiom.characters && Array.isArray(currentIdiom.characters)) {
-            rubyContainer.innerHTML = currentIdiom.characters.map(char => `
-                <ruby class="flex flex-col items-center mx-1">
-                    <rt class="text-lg sm:text-xl text-stone-500 font-sans tracking-normal lowercase mb-2 font-medium">${char.pinyin || ''}</rt>
-                    <span class="font-serif font-bold">${char.char || ''}</span>
-                </ruby>
-            `).join('');
-        } else if (pinyinText) {
+        if (pinyinText) {
+            // 按空格拆分拼音字符串
             const pinyinArray = pinyinText.split(/\s+/);
             let rubyHtml = "";
             for (let i = 0; i < idiomText.length; i++) {
@@ -113,30 +107,22 @@ function renderCard() {
         }
     }
 
-    // 2. 渲染反面：释义、翻译、例句（支持多命名保护）
+    // 2. 渲染反面：释义、翻译、例句（精准匹配 defZh, defEn, example）
     const defZhEl = document.getElementById('card-def-zh');
     if (defZhEl) {
-        defZhEl.innerText = currentIdiom.definition_zh || 
-                            currentIdiom.meaning || 
-                            currentIdiom.explanation || 
-                            currentIdiom.desc || 
-                            '暂无释义';
+        defZhEl.innerText = currentIdiom.defZh || '暂无释义';
     }
 
     const defEnEl = document.getElementById('card-def-en');
     if (defEnEl) {
-        defEnEl.innerText = currentIdiom.definition_en || 
-                            currentIdiom.translation || 
-                            currentIdiom.explanation_en || 
-                            currentIdiom.meaning_en || 
-                            currentIdiom.english || 
-                            'No English translation available.';
+        defEnEl.innerText = currentIdiom.defEn || 'No English translation available.';
     }
 
     const exampleEl = document.getElementById('card-example');
     if (exampleEl) {
-        const idiomText = currentIdiom.idiom || currentIdiom.word || '';
-        let exampleText = currentIdiom.example || currentIdiom.sentence || currentIdiom.sample || '暂无例句。';
+        const idiomText = currentIdiom.idiom || '';
+        let exampleText = currentIdiom.example || '暂无例句。';
+        // 如果例句里包含成语本身，自动将其挖空为 ______
         if (idiomText && exampleText.includes(idiomText)) {
             exampleText = exampleText.replace(idiomText, `______`);
         }
@@ -176,14 +162,14 @@ function markMastery(isMastered) {
 
     const currentIdiom = currentPlan[currentIndex];
     let wrongList = JSON.parse(localStorage.getItem('chengyu_wrong_list')) || [];
-    const currentIdiomText = currentIdiom.idiom || currentIdiom.word || '';
+    const currentIdiomText = currentIdiom.idiom || '';
 
     if (!isMastered) {
-        if (!wrongList.some(item => (item.idiom || item.word) === currentIdiomText)) {
+        if (!wrongList.some(item => item.idiom === currentIdiomText)) {
             wrongList.push(currentIdiom);
         }
     } else {
-        wrongList = wrongList.filter(item => (item.idiom || item.word) !== currentIdiomText);
+        wrongList = wrongList.filter(item => item.idiom !== currentIdiomText);
     }
 
     localStorage.setItem('chengyu_wrong_list', JSON.stringify(wrongList));
@@ -197,7 +183,7 @@ function markMastery(isMastered) {
             initApp(); 
             return;
         } else {
-            alert("🎉 今日 10 个成语已全部浏览完毕！");
+            alert("🎉 今日成语已全部浏览完毕！");
             const savedProgress = JSON.parse(localStorage.getItem('chengyu_progress'));
             if (savedProgress) {
                 savedProgress.index = currentIndex;
