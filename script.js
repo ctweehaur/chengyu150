@@ -182,7 +182,7 @@ function showEmptyState() {
 
 
 // ==========================================
-// 3. 核心 Quiz (小测验) 控制逻辑 —— 3大题型随机混合版
+// 3. 核心 Quiz (小测验) 控制逻辑
 // ==========================================
 
 // 开启测验
@@ -198,10 +198,7 @@ function startQuiz() {
     const shuffled = [...allIdioms].sort(() => 0.5 - Math.random());
     quizQuestions = shuffled.slice(0, Math.min(QUIZ_TOTAL, allIdioms.length));
     
-    // 为每道题随机指定一个题型：
-    // 0 = 看成语选释义 (基础)
-    // 1 = 看释义选成语 (逆向)
-    // 2 = 看例句填空选成语 (实战)
+    // 随机分配三种题型
     quizQuestions = quizQuestions.map(q => {
         return {
             ...q,
@@ -232,7 +229,6 @@ function renderQuizQuestion() {
 
     const questionWordEl = document.getElementById('quiz-question-word');
 
-    // 生成干扰项：从库里找 3 个不同的非当前成语
     const distractors = allIdioms
         .filter(item => item.idiom !== currentQ.idiom)
         .sort(() => 0.5 - Math.random())
@@ -243,21 +239,20 @@ function renderQuizQuestion() {
 
     // 根据随机分配的题型进行多样化渲染
     if (currentQ.qType === 0) {
-        // 【题型 0】：看成语，选释义（原汁原味）
+        // 【题型 0】：看成语，选释义 —— 已删除“选项：”前缀
         questionWordEl.innerHTML = `<span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded mr-2 font-sans font-medium">看词猜意</span><br>${currentQ.idiom}`;
         
         optionsContainer.innerHTML = options.map(opt => {
             const isCorrect = (opt.idiom === currentQ.idiom);
             return `
-                <button onclick="handleQuizAnswer(this, ${isCorrect})" class="w-full text-left p-3.5 rounded-xl border-2 border-stone-100 hover:border-amber-400 hover:bg-amber-50/50 transition-all font-sans text-stone-700 text-sm flex items-start gap-2">
-                    <span class="block text-stone-400 font-mono font-bold mt-0.5">选项:</span>
-                    <span class="flex-1">${opt.defZh}</span>
+                <button onclick="handleQuizAnswer(this, ${isCorrect})" class="w-full text-left p-4 rounded-xl border-2 border-stone-100 hover:border-amber-400 hover:bg-amber-50/50 transition-all font-sans text-stone-700 text-sm leading-relaxed">
+                    ${opt.defZh}
                 </button>
             `;
         }).join('');
 
     } else if (currentQ.qType === 1) {
-        // 【题型 1】：看释义，选成语（反向记忆）
+        // 【题型 1】：看释义，选成语
         questionWordEl.innerHTML = `<span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-sans font-medium block w-max mx-auto mb-2">根据释义选成语</span><p class="text-base font-medium font-sans px-4 text-stone-700 leading-relaxed text-left">${currentQ.defZh}</p>`;
         
         optionsContainer.innerHTML = options.map(opt => {
@@ -270,7 +265,7 @@ function renderQuizQuestion() {
         }).join('');
 
     } else if (currentQ.qType === 2) {
-        // 【题型 2】：看例句填空，选成语（实际应用）
+        // 【题型 2】：看例句填空，选成语
         let exampleText = currentQ.example || '暂无例句。';
         if (currentQ.idiom && exampleText.includes(currentQ.idiom)) {
             exampleText = exampleText.replace(currentQ.idiom, ` ______ `);
@@ -302,14 +297,12 @@ function handleQuizAnswer(buttonEl, isCorrect) {
         buttonEl.classList.remove('border-stone-100', 'hover:border-amber-400');
         buttonEl.classList.add('border-red-500', 'bg-red-50/60', 'text-red-800');
         
-        // 自动把正确答案标绿
         allButtons.forEach(btn => {
             if (btn.getAttribute('onclick').includes('true')) {
                 btn.classList.add('border-green-500', 'bg-green-50/40');
             }
         });
 
-        // 自动将答错的成语加入错题库
         let wrongList = JSON.parse(localStorage.getItem('chengyu_wrong_list')) || [];
         const currentQ = quizQuestions[quizCurrentIndex];
         if (!wrongList.some(item => item.idiom === currentQ.idiom)) {
