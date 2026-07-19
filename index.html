@@ -240,7 +240,7 @@
         let quizQuestions = [];     // 测验题队列
         let quizCurrentIndex = 0;   // 当前小测验索引
         let quizScore = 0;          // 答对题数
-        const QUIZ_TOTAL = 5;       // 测验题目容量
+        const QUIZ_TOTAL = 10;      // 每次小测验的目标题量已调整为 10 题
 
         // 完美拼音标注对齐 HTML 拼装核心方法
         function generateRubyMarkup(idiom, pinyinStr) {
@@ -420,16 +420,27 @@
         // 3. 核心 Quiz (小测验) 系统
         // ==========================================
         function startQuiz() {
-            if (!allIdioms || allIdioms.length < 4) {
-                alert("数据源成语数量不足 4 个，无法生成选择题选项！");
+            // 智能选择数据源：当前分类展示什么，测验就考什么
+            const quizSource = currentPlan.length > 0 ? currentPlan : allIdioms;
+
+            if (!quizSource || quizSource.length === 0) {
+                alert("当前选中的类目或错题本下暂无成语，无法开始小测验！");
+                return;
+            }
+            if (allIdioms.length < 4) {
+                alert("数据源成语总数量不足 4 个，无法生成选择题选项！");
                 return;
             }
 
             document.getElementById('quiz-question-container').classList.remove('hidden');
             document.getElementById('quiz-result-container').classList.add('hidden');
 
-            const shuffled = [...allIdioms].sort(() => 0.5 - Math.random());
-            quizQuestions = shuffled.slice(0, Math.min(QUIZ_TOTAL, allIdioms.length));
+            // 将当前分类下的成语打乱
+            const shuffled = [...quizSource].sort(() => 0.5 - Math.random());
+            
+            // 自适应题量：如果当前分类不足 10 个词，则有多少考多少
+            const actualTotal = Math.min(QUIZ_TOTAL, quizSource.length);
+            quizQuestions = shuffled.slice(0, actualTotal);
             
             // 混合三种随机题型
             quizQuestions = quizQuestions.map(q => {
@@ -459,6 +470,7 @@
 
             const questionWordEl = document.getElementById('quiz-question-word');
 
+            // 干扰项依旧从全库 150 个成语中抽取，确保选项的多样性与干扰质量
             const distractors = allIdioms
                 .filter(item => item.idiom !== currentQ.idiom)
                 .sort(() => 0.5 - Math.random())
