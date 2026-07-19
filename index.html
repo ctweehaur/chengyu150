@@ -3,133 +3,402 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>常用成语150句</title>
-    <!-- 引入 Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入自定义样式 -->
-    <link rel="stylesheet" href="style.css">
-</head>
-<body class="bg-stone-50 min-h-screen font-sans text-stone-800 flex flex-col items-center py-6 px-4">
+    <title>趣味成语学习中心 | Idiom Learning Hub</title>
+    <style>
+        /* 页面基础样式与调色盘 */
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #5cbd7d;
+            --bg-color: #f7f9fc;
+            --card-front: #ffffff;
+            --card-back: #eef5fc;
+            --text-main: #2c3e50;
+            --text-muted: #7f8c8d;
+        }
 
-    <!-- 顶部标题区 -->
-    <header class="text-center mb-4">
-        <h1 class="text-2xl font-bold text-stone-800 tracking-wide">常用成语150句</h1>
-        <p id="daily-status" class="text-xs text-stone-400 mt-1 font-medium">每日复习计划（今日 10 句）</p>
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 2.5rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            margin: 5px 0 0 0;
+        }
+
+        /* 分类筛选导航栏 */
+        .filter-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 40px;
+            max-width: 800px;
+        }
+
+        .filter-btn {
+            background-color: #fff;
+            border: 2px solid #e0e0e0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: #fff;
+            box-shadow: 0 4px 6px rgba(74, 144, 226, 0.2);
+        }
+
+        /* 主视窗区域 */
+        .container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 3D 翻转卡片容器 */
+        .idiom-card-container {
+            perspective: 1000px;
+            width: 100%;
+            height: 350px;
+            cursor: pointer;
+            margin-bottom: 25px;
+        }
+
+        .idiom-card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            border-radius: 16px;
+        }
+
+        /* 当点击或激活翻转时加入这个 class */
+        .idiom-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        /* 卡片正面样式 */
+        .card-front {
+            background-color: var(--card-front);
+            border: 1px solid #eef2f5;
+        }
+
+        .card-front .character {
+            font-size: 3.5rem;
+            font-weight: bold;
+            letter-spacing: 4px;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+
+        .card-front .pinyin {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        /* 卡片背面样式 */
+        .card-back {
+            background-color: var(--card-back);
+            transform: rotateY(180deg);
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .card-back h2 {
+            margin: 0 0 10px 0;
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .meta-section {
+            width: 100%;
+        }
+
+        .definition-item {
+            margin-bottom: 15px;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #34495e;
+            display: block;
+            margin-bottom: 3px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .example-box {
+            background: rgba(255,255,255,0.6);
+            padding: 12px;
+            border-left: 4px solid var(--secondary-color);
+            border-radius: 4px;
+            margin-top: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* 控制按钮区域 */
+        .controls {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn-prev { background-color: #e0e0e0; color: #555; }
+        .btn-prev:hover { background-color: #d2d2d2; }
+        .btn-next { background-color: var(--primary-color); color: white; }
+        .btn-next:hover { background-color: #357abd; }
+        
+        /* 进度提示 */
+        .progress-text {
+            margin-top: 15px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>💡 核心成语互动学习舱</h1>
+        <p>150 个专为高段写作精选的高频成语大宝库</p>
     </header>
 
-    <!-- 功能按钮控制区 -->
-    <div class="w-full max-w-lg grid grid-cols-2 gap-3 mb-4">
-        <!-- 错题专项训练按钮 -->
-        <button onclick="startWeaknessTraining()" class="bg-white border border-stone-200 py-2.5 px-3 rounded-xl shadow-sm text-center text-stone-700 text-sm font-medium hover:bg-stone-50 transition-all flex items-center justify-center gap-2">
-            🎯 错题训练 (0)
-        </button>
-        
-        <!-- Quiz 小测验按钮 -->
-        <button onclick="startQuiz()" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white py-2.5 px-3 rounded-xl shadow-md text-sm font-medium hover:from-amber-600 hover:to-orange-600 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
-            📝 开始小测验 (Quiz)
-        </button>
+    <!-- 分类筛选导航条 -->
+    <nav class="filter-nav" id="filterNav">
+        <button class="filter-btn active" onclick="filterCategory('全部')">全部 (All)</button>
+        <button class="filter-btn" onclick="filterCategory('人物神态')">🎭 人物神态</button>
+        <button class="filter-btn" onclick="filterCategory('心理情感')">🧠 心理情感</button>
+        <button class="filter-btn" onclick="filterCategory('学习工作')">✍️ 学习工作</button>
+        <button class="filter-btn" onclick="filterCategory('品格人际')">🤝 品格人际</button>
+        <button class="filter-btn" onclick="filterCategory('环境自然')">🏞️ 环境自然</button>
+        <button class="filter-btn" onclick="filterCategory('说话寓理')">💬 说话寓理</button>
+    </nav>
+
+    <!-- 主交互舞台 -->
+    <div class="container">
+        <!-- 翻转卡片结构 -->
+        <div class="idiom-card-container" onclick="toggleFlip()">
+            <div class="idiom-card" id="idiomCard">
+                <!-- 正面：看词看音 -->
+                <div class="card-face card-front">
+                    <div class="character" id="cardIdiom">加载中...</div>
+                    <div class="pinyin" id="cardPinyin">loading...</div>
+                </div>
+                <!-- 背面：查义看例 -->
+                <div class="card-face card-back">
+                    <div class="meta-section">
+                        <h2 id="backIdiom">成语</h2>
+                        <div class="definition-item">
+                            <span class="label">中文释义：</span>
+                            <span id="cardDefZh">释义加载中...</span>
+                        </div>
+                        <div class="definition-item">
+                            <span class="label">English Definition：</span>
+                            <span id="cardDefEn">Definition loading...</span>
+                        </div>
+                    </div>
+                    <div class="example-box">
+                        <span class="label">华语造句示范：</span>
+                        <span id="cardExample">例句加载中...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 左右切换控制 -->
+        <div class="controls">
+            <button class="btn btn-prev" onclick="prevCard()">⬅️ 上一个 (Prev)</button>
+            <button class="btn btn-next" onclick="nextCard()">下一个 (Next) ➡️</button>
+        </div>
+
+        <!-- 当前类目的计数进度 -->
+        <div class="progress-text" id="progressText">0 / 0</div>
     </div>
 
-    <!-- 核心闪卡容器 -->
-    <div id="card-container" class="w-full max-w-lg h-[380px] sm:h-[400px] cursor-pointer mb-5">
-        <div id="flip-card" class="w-full h-full relative transform-style-3d">
+    <!-- ==========================================
+         🧱 核心数据引入区（严格采用一类一文件解耦）
+         ========================================== -->
+    <script src="data-character.js"></script>
+    <script src="data-emotion.js"></script>
+    <script src="data-study.js"></script>
+    <script src="data-relationship.js"></script>
+    <script src="data-environment.js"></script>
+    <script src="data-speech.js"></script>
+
+    <!-- ==========================================
+         🧬 主数组拼装区 
+         ========================================== -->
+    <script>
+        // 将解耦出的各大分类数组利用 JavaScript 展开运算符拼接为一个超级大总库
+        const allIdioms = [
+            ...(typeof characterIdioms !== 'undefined' ? characterIdioms : []),
+            ...(typeof emotionIdioms !== 'undefined' ? emotionIdioms : []),
+            ...(typeof studyIdioms !== 'undefined' ? studyIdioms : []),
+            ...(typeof relationshipIdioms !== 'undefined' ? relationshipIdioms : []),
+            ...(typeof environmentIdioms !== 'undefined' ? environmentIdioms : []),
+            ...(typeof speechIdioms !== 'undefined' ? speechIdioms : [])
+        ];
+    </script>
+
+    <!-- ==========================================
+         🎮 交互逻辑控制层 (你可以保留在 html 或单独剪切去 script.js)
+         ========================================== -->
+    <script>
+        let displayList = [...allIdioms]; // 当前正在展示的数据池（根据筛选而变化）
+        let currentIndex = 0;             // 当前浏览的成语指针
+
+        window.onload = function() {
+            // 如果数据全部成功载入，渲染第一个词
+            if (displayList.length > 0) {
+                renderCard();
+            } else {
+                document.getElementById('cardIdiom').innerText = "未检测到数据文件";
+            }
+            setupActiveButtonText();
+        };
+
+        // 卡片翻转动作
+        function toggleFlip() {
+            const card = document.getElementById('idiomCard');
+            card.classList.toggle('flipped');
+        }
+
+        // 强行重置卡片回到正面（换词的时候使用）
+        function resetFlip() {
+            const card = document.getElementById('idiomCard');
+            card.classList.remove('flipped');
+        }
+
+        // 把当前指针对应的数据渲染上卡片
+        function renderCard() {
+            if (displayList.length === 0) return;
+            const currentItem = displayList[currentIndex];
+
+            // 填充正面
+            document.getElementById('cardIdiom').innerText = currentItem.idiom;
+            document.getElementById('cardPinyin').innerText = currentItem.pinyin;
+
+            // 填充背面
+            document.getElementById('backIdiom').innerText = currentItem.idiom;
+            document.getElementById('cardDefZh').innerText = currentItem.defZh;
+            document.getElementById('cardDefEn').innerText = currentItem.defEn;
+            document.getElementById('cardExample').innerText = currentItem.example;
+
+            // 更新页脚进度条
+            document.getElementById('progressText').innerText = `${currentIndex + 1} / ${displayList.length}`;
+        }
+
+        // 下一个按钮
+        function nextCard() {
+            if (displayList.length === 0) return;
+            resetFlip();
+            // 延迟一点切词，等卡片翻回正面的过渡动画完成，视觉效果更平滑
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % displayList.length;
+                renderCard();
+            }, 150);
+        }
+
+        // 上一个按钮
+        function prevCard() {
+            if (displayList.length === 0) return;
+            resetFlip();
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + displayList.length) % displayList.length;
+                renderCard();
+            }, 150);
+        }
+
+        // 分类筛选过滤器
+        function filterCategory(categoryName) {
+            resetFlip();
             
-            <!-- 卡片正面：成语与大拼音 -->
-            <div class="absolute inset-0 bg-white rounded-2xl border border-stone-100 shadow-xl shadow-stone-200/50 flex flex-col items-center justify-center p-6 backface-hidden">
-                <div id="card-idiom-ruby" class="flex flex-wrap items-center justify-center text-5xl tracking-wide select-none">
-                    <span class="text-stone-300 text-base font-sans">加载中...</span>
-                </div>
-            </div>
+            // 1. 切换导航高亮按钮的样式
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
 
-            <!-- 卡片背面：优化后的均匀分布与大字号例句 -->
-            <div class="absolute inset-0 bg-orange-50/40 rounded-2xl border-2 border-orange-100/60 shadow-xl shadow-stone-200/50 flex flex-col p-6 backface-hidden overflow-hidden relative">
+            // 2. 过滤数据源
+            setTimeout(() => {
+                if (categoryName === '全部') {
+                    displayList = [...allIdioms];
+                } else {
+                    displayList = allIdioms.filter(item => item.category === categoryName);
+                }
+                currentIndex = 0; // 指针重置回第一张
                 
-                <!-- 内层典雅细线框 -->
-                <div class="absolute inset-2 border border-amber-900/5 rounded-xl pointer-events-none"></div>
+                if(displayList.length > 0) {
+                    renderCard();
+                } else {
+                    clearCardShowEmpty();
+                }
+            }, 150);
+        }
 
-                <!-- 通过 justify-between 让三大块在纵向完美分布，不再聚在顶部 -->
-                <div class="relative z-10 flex flex-col justify-between h-full py-1">
-                    
-                    <!-- 中文释义区块 -->
-                    <div>
-                        <div class="inline-flex items-center gap-1 bg-amber-700/10 text-amber-800 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md mb-2">
-                            <span>释义</span>
-                        </div>
-                        <p id="card-def-zh" class="text-base font-semibold text-stone-800 leading-relaxed pl-1">暂无释义</p>
-                    </div>
+        function clearCardShowEmpty() {
+            document.getElementById('cardIdiom').innerText = "暂无数据";
+            document.getElementById('cardPinyin').innerText = "";
+            document.getElementById('progressText').innerText = "0 / 0";
+        }
 
-                    <!-- 英文翻译区块 -->
-                    <div>
-                        <div class="inline-flex items-center gap-1 bg-stone-200/60 text-stone-600 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md mb-1.5">
-                            <span>TRANSLATION</span>
-                        </div>
-                        <p id="card-def-en" class="text-xs italic text-stone-500 leading-relaxed pl-1">No English translation available.</p>
-                    </div>
-
-                    <!-- 例句区块：移除了 mt-auto，加大了字体 (text-[14px]) 并微调了行高 -->
-                    <div class="bg-white/80 border border-amber-950/5 p-3.5 rounded-xl shadow-sm">
-                        <div class="inline-flex items-center gap-1 bg-amber-900/5 text-amber-900/70 text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded mb-2">
-                            <span>日常应用</span>
-                        </div>
-                        <p id="card-example" class="text-stone-700 text-[14px] font-medium leading-relaxed pl-0.5 tracking-wide">暂无例句。</p>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-    </div>
-
-    <!-- 底部操作与进度反馈 -->
-    <div class="w-full max-w-lg flex flex-col items-center gap-3">
-        <!-- 掌握控制按钮 -->
-        <div class="w-full grid grid-cols-2 gap-4">
-            <button onclick="markMastery(false)" class="bg-white border-2 border-stone-200 hover:border-red-400 hover:bg-red-50/30 text-stone-700 py-3 px-6 rounded-xl font-semibold shadow-sm transition-all text-center text-sm flex items-center justify-center gap-2">
-                ❌ 待加强
-            </button>
-            <button onclick="markMastery(true)" class="bg-stone-800 hover:bg-stone-900 text-white py-3 px-6 rounded-xl font-semibold shadow-md transition-all text-center text-sm flex items-center justify-center gap-2">
-                ✅ 已掌握
-            </button>
-        </div>
-
-        <!-- 进度条文本 -->
-        <p id="progress-indicator" class="text-[11px] text-stone-400 font-mono tracking-wider">进度：0 / 0</p>
-    </div>
-
-    <!-- Quiz 模态弹窗 -->
-    <div id="quiz-modal" class="fixed inset-0 bg-black/40 flex items-center justify-center hidden z-50 p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-5 relative flex flex-col max-h-[90vh]">
-            <button onclick="closeQuiz()" class="absolute top-3 right-3 text-stone-400 hover:text-stone-600 text-xl font-bold transition-colors">&times;</button>
-            
-            <div class="border-b border-stone-100 pb-2 mb-3">
-                <h3 class="text-base font-bold text-stone-800">🎯 成语释义挑战</h3>
-                <div class="w-full bg-stone-100 h-1.5 rounded-full mt-2 overflow-hidden">
-                    <div id="quiz-progress-bar" class="bg-amber-500 h-full transition-all duration-300" style="width: 0%"></div>
-                </div>
-                <p id="quiz-q-num" class="text-[10px] text-stone-400 mt-1 font-mono">题目 1 / 5</p>
-            </div>
-
-            <div class="flex-1 overflow-y-auto mb-1 pr-1">
-                <div id="quiz-question-container">
-                    <h4 id="quiz-question-word" class="text-2xl font-serif font-bold text-stone-800 text-center my-3 tracking-wide">-</h4>
-                    <div id="quiz-options" class="space-y-2"></div>
-                </div>
-                
-                <div id="quiz-result-container" class="hidden text-center py-6">
-                    <span class="text-4xl block animate-bounce">🏆</span>
-                    <h4 class="text-xl font-bold text-stone-800 mt-3">测验圆满结束！</h4>
-                    <p id="quiz-score" class="text-3xl font-black text-amber-600 my-3">0 / 5</p>
-                    <p id="quiz-eval" class="text-xs text-stone-500 mb-5 px-4">完成得不错！</p>
-                    <button onclick="startQuiz()" class="w-full py-2.5 bg-stone-800 text-white rounded-xl text-sm font-medium hover:bg-stone-900 transition-colors">
-                        再考一次
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 数据源与核心脚本 -->
-    <script src="data.js"></script>
-    <script src="script.js"></script>
+        function setupActiveButtonText() {
+            // 初始化辅助检测
+            console.log("成功装载成语总条数：", allIdioms.length);
+        }
+    </script>
 </body>
 </html>
