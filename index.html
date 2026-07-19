@@ -30,7 +30,7 @@
         </button>
     </div>
 
-    <!-- 核心闪卡容器（缩短了高度，电脑屏幕完美适配） -->
+    <!-- 核心闪卡容器 -->
     <div id="card-container" class="w-full max-w-lg h-[380px] sm:h-[400px] cursor-pointer mb-5">
         <div id="flip-card" class="w-full h-full relative transform-style-3d">
             
@@ -41,25 +41,38 @@
                 </div>
             </div>
 
-            <!-- 卡片背面：紧凑型释义与例句 -->
-            <div class="absolute inset-0 bg-white rounded-2xl border border-stone-100 shadow-xl shadow-stone-200/50 flex flex-col p-6 backface-hidden overflow-hidden">
-                <!-- 中文释义 -->
-                <div class="mb-3.5 border-l-4 border-amber-600 pl-3">
-                    <span class="block text-[10px] font-bold uppercase tracking-wider text-amber-700/70 mb-0.5">【释义】</span>
-                    <p id="card-def-zh" class="text-base font-medium text-stone-800 leading-relaxed">暂无释义</p>
+            <!-- 卡片背面：全新升级的高级极简复古层次排版 -->
+            <div class="absolute inset-0 bg-orange-50/40 rounded-2xl border-2 border-orange-100/60 shadow-xl shadow-stone-200/50 flex flex-col p-6 backface-hidden overflow-hidden relative">
+                
+                <!-- 内层典雅细线框 -->
+                <div class="absolute inset-2 border border-amber-900/5 rounded-xl pointer-events-none"></div>
+
+                <div class="relative z-10 flex flex-col h-full">
+                    <!-- 中文释义区块 -->
+                    <div class="mb-3.5">
+                        <div class="inline-flex items-center gap-1 bg-amber-700/10 text-amber-800 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md mb-2">
+                            <span>释义</span>
+                        </div>
+                        <p id="card-def-zh" class="text-base font-semibold text-stone-800 leading-relaxed pl-1">暂无释义</p>
+                    </div>
+
+                    <!-- 英文翻译区块 -->
+                    <div class="mb-4">
+                        <div class="inline-flex items-center gap-1 bg-stone-200/60 text-stone-600 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md mb-1.5">
+                            <span>TRANSLATION</span>
+                        </div>
+                        <p id="card-def-en" class="text-xs italic text-stone-500 leading-relaxed pl-1">No English translation available.</p>
+                    </div>
+
+                    <!-- 例句区块（沉底且独立精致衬底） -->
+                    <div class="mt-auto bg-white/80 border border-amber-950/5 p-3 rounded-xl shadow-sm">
+                        <div class="inline-flex items-center gap-1 bg-amber-900/5 text-amber-900/70 text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded mb-1.5">
+                            <span>日常应用</span>
+                        </div>
+                        <p id="card-example" class="text-stone-600 text-xs leading-relaxed pl-0.5">暂无例句。</p>
+                    </div>
                 </div>
 
-                <!-- 英文翻译 -->
-                <div class="mb-4 border-l-4 border-stone-300 pl-3">
-                    <span class="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-0.5">【Translation】</span>
-                    <p id="card-def-en" class="text-xs italic text-stone-600 leading-relaxed">No English translation available.</p>
-                </div>
-
-                <!-- 例句 -->
-                <div class="mt-auto bg-stone-50 p-3 rounded-xl border border-stone-100">
-                    <span class="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">【日常应用】</span>
-                    <p id="card-example" class="text-stone-600 text-xs leading-relaxed">暂无例句。</p>
-                </div>
             </div>
 
         </div>
