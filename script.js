@@ -61,7 +61,7 @@ function initApp() {
 }
 
 // ==========================================
-// 3. 卡片渲染与翻转逻辑（智能动态拼音对齐）
+// 3. 卡片渲染与翻转逻辑（已放大拼音字号）
 // ==========================================
 function renderCard() {
     if (currentPlan.length === 0) {
@@ -81,7 +81,7 @@ function renderCard() {
     if (flipCardEl) flipCardEl.classList.remove('rotate-y-180');
     isFlipped = false;
 
-    // 1. 渲染正面：智能处理各种拼音格式，完美对齐
+    // 1. 渲染正面：智能处理各种拼音格式，并放大了拼音显示
     const rubyContainer = document.getElementById('card-idiom-ruby');
     if (rubyContainer) {
         const idiomText = currentIdiom.idiom || currentIdiom.word || "未知成语";
@@ -90,13 +90,13 @@ function renderCard() {
         if (currentIdiom.characters && Array.isArray(currentIdiom.characters)) {
             // 格式一：带有分解的字和拼音数组
             rubyContainer.innerHTML = currentIdiom.characters.map(char => `
-                <ruby class="flex flex-col items-center">
-                    <rt class="text-[10px] sm:text-xs text-stone-400 font-sans tracking-normal lowercase mb-1">${char.pinyin || ''}</rt>
+                <ruby class="flex flex-col items-center mx-1">
+                    <rt class="text-lg sm:text-xl text-stone-500 font-sans tracking-normal lowercase mb-2 font-medium">${char.pinyin || ''}</rt>
                     <span class="font-serif font-bold">${char.char || ''}</span>
                 </ruby>
             `).join('');
         } else if (pinyinText) {
-            // 格式二：成语是文本，拼音是用空格隔开的字符串（例如："yī sī bù gǒu"）
+            // 格式二：成语是文本，拼音是用空格隔开的字符串（例如："jù jīng huì shén"）
             const pinyinArray = pinyinText.split(/\s+/); // 按空格拆分拼音
             let rubyHtml = "";
             
@@ -104,15 +104,15 @@ function renderCard() {
                 const char = idiomText[i];
                 const py = pinyinArray[i] || ""; // 防止拼音和汉字数量对不上
                 rubyHtml += `
-                    <ruby class="flex flex-col items-center">
-                        <rt class="text-[10px] sm:text-xs text-stone-400 font-sans tracking-normal lowercase mb-1">${py}</rt>
+                    <ruby class="flex flex-col items-center mx-1">
+                        <rt class="text-lg sm:text-xl text-stone-500 font-sans tracking-normal lowercase mb-2 font-medium">${py}</rt>
                         <span class="font-serif font-bold">${char}</span>
                     </ruby>
                 `;
             }
             rubyContainer.innerHTML = rubyHtml;
         } else {
-            // 格式三：纯文本，完全无拼音数据时的垫底保护
+            // 格式三：纯文本时的垫底保护
             rubyContainer.innerHTML = `<span class="font-serif font-bold">${idiomText}</span>`;
         }
     }
