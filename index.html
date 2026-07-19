@@ -62,6 +62,25 @@
             cursor: not-allowed;
             opacity: 0.85;
         }
+
+        /* 打印专用 A4 样式控制 */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #print-area, #print-area * {
+                visibility: visible;
+            }
+            #print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen p-4 flex flex-col items-center justify-start select-none">
@@ -69,7 +88,7 @@
     <div id="app" class="w-full max-w-lg pt-4 flex flex-col">
         <header class="text-center mb-4">
             <h1 class="text-2xl font-bold text-stone-700 tracking-wide chengyu-title">常用成语150句</h1>
-            <!-- 掌握度进度条（Gamification仪表盘） -->
+            <!-- 掌握度进度条（Gamification 仪表盘） -->
             <div class="mt-3 bg-stone-200/60 rounded-full h-2 w-full overflow-hidden flex">
                 <div id="mastery-progress-bar" class="bg-emerald-500 h-full transition-all duration-500" style="width: 0%"></div>
             </div>
@@ -87,15 +106,20 @@
             <button class="px-3 py-1 bg-white border border-stone-200 hover:border-stone-400 hover:bg-stone-50 text-stone-600 text-xs rounded-full transition-all" onclick="filterCategory('说话寓理')">💬 说话寓理</button>
         </nav>
 
-        <div class="grid grid-cols-2 gap-3 mb-4">
-            <!-- 错题专项训练按钮 -->
-            <button onclick="startWeaknessTraining()" class="bg-white border border-stone-200 py-2.5 px-3 rounded-xl shadow-sm text-center text-stone-700 text-xs font-semibold hover:bg-stone-50 transition-all flex items-center justify-center gap-1.5">
+        <div class="grid grid-cols-3 gap-2 mb-4">
+            <!-- 错题专项训练 -->
+            <button onclick="startWeaknessTraining()" class="bg-white border border-stone-200 py-2.5 px-1 rounded-xl shadow-sm text-center text-stone-700 text-[11px] font-semibold hover:bg-stone-50 transition-all flex items-center justify-center gap-1">
                 🎯 错题训练 (0)
             </button>
             
-            <!-- Quiz 小测验按钮 -->
-            <button onclick="startQuiz()" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white py-2.5 px-3 rounded-xl shadow-md text-xs font-semibold hover:from-amber-600 hover:to-orange-600 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-1.5">
-                📝 开始小测验 (Quiz)
+            <!-- A4 打印学习单 (新! 提升学习效果的核心功能) -->
+            <button onclick="openPrintModal()" class="bg-white border border-stone-200 py-2.5 px-1 rounded-xl shadow-sm text-center text-stone-700 text-[11px] font-semibold hover:bg-stone-50 transition-all flex items-center justify-center gap-1">
+                📄 A4 打印复习卷
+            </button>
+            
+            <!-- Quiz 小测验 -->
+            <button onclick="startQuiz()" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white py-2.5 px-1 rounded-xl shadow-md text-[11px] font-semibold hover:from-amber-600 hover:to-orange-600 transition-all flex items-center justify-center gap-1">
+                📝 开始小测验
             </button>
         </div>
 
@@ -109,7 +133,7 @@
                     </div>
                 </div>
 
-                <!-- 卡片反面：高级极简复古层次排版（双栏翻译 + 14px大字号例句） -->
+                <!-- 卡片反面：双栏翻译 + 大字号例句 -->
                 <div class="absolute inset-0 bg-orange-50/40 rounded-2xl border-2 border-orange-100/60 shadow-xl shadow-stone-200/50 flex flex-col p-5 backface-hidden overflow-hidden">
                     <!-- 内层典雅细线框 -->
                     <div class="absolute inset-2 border border-amber-900/5 rounded-xl pointer-events-none"></div>
@@ -118,12 +142,12 @@
                         <!-- 中文释义区块 -->
                         <div>
                             <div class="inline-flex items-center gap-1 bg-amber-700/10 text-amber-800 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md mb-1.5">
-                                <span>华文释义 (Maksud)</span>
+                                <span>华文释义</span>
                             </div>
                             <p id="card-def-zh" class="text-[15px] font-semibold text-stone-800 leading-relaxed pl-1">暂无释义</p>
                         </div>
 
-                        <!-- 翻译双栏区块（左英文，右国文，省空间，防滚动） -->
+                        <!-- 翻译双栏区块（左英文，右国文） -->
                         <div class="grid grid-cols-2 gap-3 border-t border-b border-amber-900/5 py-2.5 my-1">
                             <!-- 英文翻译 -->
                             <div>
@@ -132,19 +156,19 @@
                                 </div>
                                 <p id="card-def-en" class="text-[11px] italic text-stone-600 leading-snug pl-0.5">No translation.</p>
                             </div>
-                            <!-- 马来文翻译 (BM / Peribahasa) -->
+                            <!-- 马来文翻译 -->
                             <div>
                                 <div class="inline-flex items-center gap-1 bg-red-100/50 text-red-800 text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded mb-1">
-                                    <span>B. MELAYU / PERIBAHASA</span>
+                                    <span>MELAYU / PERIBAHASA</span>
                                 </div>
                                 <p id="card-def-bm" class="text-[11px] text-stone-700 leading-snug pl-0.5 font-medium">Tiada terjemahan.</p>
                             </div>
                         </div>
 
-                        <!-- 例句区块（独立精致衬底，字号13px，更易阅读） -->
+                        <!-- 例句区块（字号13px） -->
                         <div class="bg-white/80 border border-amber-950/5 p-3.5 rounded-xl shadow-sm">
                             <div class="inline-flex items-center gap-1 bg-amber-900/5 text-amber-900/70 text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded mb-1.5">
-                                <span>日常应用 (Contoh Ayat)</span>
+                                <span>例句</span>
                             </div>
                             <p id="card-example" class="text-stone-700 text-[13px] font-medium leading-relaxed pl-0.5 tracking-wide">暂无例句。</p>
                         </div>
@@ -157,10 +181,10 @@
         <div class="w-full flex flex-col items-center gap-3">
             <div class="grid grid-cols-2 gap-4 w-full">
                 <button onclick="markMastery(false)" class="bg-white border-2 border-stone-200 hover:border-red-400 hover:bg-red-50/30 text-stone-700 py-3 px-6 rounded-xl font-semibold shadow-sm transition-all text-center text-sm flex items-center justify-center gap-2">
-                    ❌ 待加强 (Belum Kuasai)
+                    ❌ 待加强
                 </button>
                 <button onclick="markMastery(true)" class="bg-stone-800 hover:bg-stone-900 text-white py-3 px-6 rounded-xl font-semibold shadow-md transition-all text-center text-sm flex items-center justify-center gap-2">
-                    ✅ 已掌握 (Sudah Kuasai)
+                    ✅ 已掌握
                 </button>
             </div>
 
@@ -169,10 +193,8 @@
         </div>
     </div>
 
-    <!-- 优雅 Toast 气泡提醒容器 -->
     <div id="toast-container" class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- Quiz 小测验弹窗 -->
     <div id="quiz-modal" class="fixed inset-0 bg-black/40 flex items-center justify-center hidden z-50 p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-5 relative flex flex-col max-h-[90vh]">
             <button onclick="closeQuiz()" class="absolute top-3 right-3 text-stone-400 hover:text-stone-600 text-xl font-bold transition-colors">&times;</button>
@@ -188,7 +210,6 @@
             <div class="flex-1 overflow-y-auto mb-1 pr-1">
                 <div id="quiz-question-container">
                     <h4 id="quiz-question-word" class="text-2xl font-serif font-bold text-stone-800 text-center my-3 tracking-wide">-</h4>
-                    <!-- 动态渲染 4 个选项（已剔除“选项：”前缀） -->
                     <div id="quiz-options" class="space-y-2"></div>
                 </div>
                 
@@ -202,6 +223,46 @@
                         再考一次
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="print-modal" class="fixed inset-0 bg-black/40 flex items-center justify-center hidden z-50 p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative flex flex-col max-h-[85vh]">
+            <button onclick="closePrintModal()" class="absolute top-3 right-3 text-stone-400 hover:text-stone-600 text-xl font-bold transition-colors">&times;</button>
+            
+            <div class="border-b border-stone-100 pb-3 mb-4">
+                <h3 class="text-lg font-bold text-stone-800">📄 导出 A4 A纸 纸质冲刺复习卷</h3>
+                <p class="text-xs text-stone-400 mt-1">支持打印成 PDF 或直接物理打印，非常适合国中/统考备战！</p>
+            </div>
+
+            <!-- 选择打印模式 -->
+            <div class="mb-4 bg-stone-50 p-3.5 rounded-xl border border-stone-100">
+                <p class="text-xs font-bold text-stone-600 mb-2">1. 选择输出模式：</p>
+                <div class="grid grid-cols-2 gap-3">
+                    <button id="print-mode-full" onclick="setPrintMode('full')" class="py-2 px-3 rounded-lg border-2 border-amber-500 bg-amber-50 text-amber-800 text-xs font-bold transition-all">
+                        双语完美对照表 (完整)
+                    </button>
+                    <button id="print-mode-exam" onclick="setPrintMode('exam')" class="py-2 px-3 rounded-lg border border-stone-200 bg-white text-stone-600 text-xs font-semibold hover:border-stone-400 transition-all">
+                        成语默写测试卷 (挖空)
+                    </button>
+                </div>
+            </div>
+
+            <!-- 打印预览视窗 -->
+            <div class="flex-1 overflow-y-auto mb-4 border border-stone-200/60 rounded-xl p-3 bg-white max-h-[40vh]" id="print-preview-container">
+                <div id="print-area" class="text-left font-sans text-xs">
+                    <!-- 动态渲染成表格预览 -->
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="closePrintModal()" class="flex-1 py-2.5 border border-stone-200 rounded-xl text-xs font-semibold text-stone-500 hover:bg-stone-50 transition-colors">
+                    取消
+                </button>
+                <button onclick="triggerPrint()" class="flex-1 py-2.5 bg-stone-800 text-white rounded-xl text-xs font-semibold hover:bg-stone-900 transition-colors shadow-md">
+                    🖨️ 呼叫系统打印 (或存 PDF)
+                </button>
             </div>
         </div>
     </div>
@@ -231,7 +292,7 @@
     </script>
 
     <!-- ==========================================
-         🎮 核心交互逻辑 (无 Alert / Toast响应 / 掌握进度统计)
+         🎮 核心交互逻辑与 A4 打印控制
          ========================================== -->
     <script>
         let currentPlan = [];       // 当前学习的成语队列
@@ -239,12 +300,13 @@
         let isFlipped = false;      // 卡片是否旋转
         let isWeaknessMode = false;  // 是否处于错题集训模式
         let activeCategory = '全部'; // 当前选定的过滤器标签
+        let printMode = 'full';     // 'full' 为对照表，'exam' 为挖空卷
 
         // --- Quiz 测验专用变量 ---
         let quizQuestions = [];     // 测验题目队列
         let quizCurrentIndex = 0;   // 当前小测验题号指针
         let quizScore = 0;          // 答对题数
-        const QUIZ_TOTAL = 10;      // 每次小测验的目标题量已调整为 10 题
+        const QUIZ_TOTAL = 10;      // 每次小测验的目标题量
 
         function generateRubyMarkup(idiom, pinyinStr) {
             const chars = idiom.split('');
@@ -339,27 +401,20 @@
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            
             const bgClass = type === 'success' ? 'bg-stone-800 text-white' : 'bg-red-50 border border-red-200 text-red-800';
-            
             toast.className = `${bgClass} px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold tracking-wide flex items-center gap-1.5 animate-bounce pointer-events-auto transition-all duration-300`;
             toast.innerHTML = message;
-            
             container.appendChild(toast);
             
-            // 2.5秒后自动渐隐销毁
             setTimeout(() => {
                 toast.classList.add('opacity-0', '-translate-y-2');
-                setTimeout(() => {
-                    toast.remove();
-                }, 300);
+                setTimeout(() => { toast.remove(); }, 300);
             }, 2500);
         }
 
         // 终身掌握进度统计
         function updateMasteryProgress() {
             let wrongList = JSON.parse(localStorage.getItem('chengyu_wrong_list')) || [];
-            // 所有非错题本中的成语，默认计为“已掌握”
             const totalWords = allIdioms.length;
             const wrongCount = wrongList.length;
             const masteredCount = Math.max(0, totalWords - wrongCount);
@@ -450,13 +505,114 @@
             if (rubyContainer) rubyContainer.innerHTML = `<span class="text-base text-stone-400">该类目下暂无成语数据</span>`;
         }
 
+        // --- A4 打印复习卷控制算法 (新! 独创的纸笔默写卷生成功能) ---
+        function openPrintModal() {
+            document.getElementById('print-modal').classList.remove('hidden');
+            renderPrintPreview();
+        }
 
-        // ==========================================
-        // 💬 Quiz 小测验核心逻辑 (分类联动 + 3大随机题型)
-        // ==========================================
+        function closePrintModal() {
+            document.getElementById('print-modal').classList.add('hidden');
+        }
 
+        function setPrintMode(mode) {
+            printMode = mode;
+            const fullBtn = document.getElementById('print-mode-full');
+            const examBtn = document.getElementById('print-mode-exam');
+
+            if (mode === 'full') {
+                fullBtn.className = "py-2 px-3 rounded-lg border-2 border-amber-500 bg-amber-50 text-amber-800 text-xs font-bold transition-all";
+                examBtn.className = "py-2 px-3 rounded-lg border border-stone-200 bg-white text-stone-600 text-xs font-semibold hover:border-stone-400 transition-all";
+            } else {
+                examBtn.className = "py-2 px-3 rounded-lg border-2 border-amber-500 bg-amber-50 text-amber-800 text-xs font-bold transition-all";
+                fullBtn.className = "py-2 px-3 rounded-lg border border-stone-200 bg-white text-stone-600 text-xs font-semibold hover:border-stone-400 transition-all";
+            }
+            renderPrintPreview();
+        }
+
+        function renderPrintPreview() {
+            const container = document.getElementById('print-area');
+            const printList = currentPlan;
+
+            if (printList.length === 0) {
+                container.innerHTML = `<p class="text-stone-400 text-center py-8">当前选中的类别暂无数据可以生成复习卷</p>`;
+                return;
+            }
+
+            const headerTitle = printMode === 'full' 
+                ? `📚 常用成语 A4 双语对照学习单（类别：${activeCategory}）` 
+                : `📝 常用成语 课后默写与复习卷（类别：${activeCategory}）`;
+
+            const instruction = printMode === 'full'
+                ? "【复习指引】请仔细阅读成语的华语、英语及国语（Peribahasa 联动）对照，结合例句加深写作应用。"
+                : "【默写自测】请根据中文释义和马来文说明，在“成语默写”栏内写出正确的成语，并尝试自己完成拼音写注。";
+
+            let tableHtml = `
+                <div style="font-family: Arial, sans-serif; padding: 20px; color: #111;">
+                    <h2 style="font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 5px;">${headerTitle}</h2>
+                    <p style="font-size: 10px; color: #555; text-align: center; margin-bottom: 15px; border-bottom: 2px solid #000; padding-bottom: 8px;">姓名：____________________  班级：__________  得分：__________ / ${printList.length}</p>
+                    <p style="font-size: 10px; font-style: italic; background: #f9f9f9; padding: 8px; border: 1px dashed #ccc; border-radius: 4px; margin-bottom: 15px;">${instruction}</p>
+                    
+                    <table style="width:100%; border-collapse: collapse; font-size: 11px;">
+                        <thead>
+                            <tr style="background-color: #f2f2f2; border-bottom: 1px solid #111;">
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left; width: 5%;">No.</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left; width: 25%;">${printMode === 'full' ? '成语 (Pinyin)' : '成语默写 (Tulis Di Sini)'}</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left; width: 35%;">中文释义 & BM Terjemahan</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left; width: 35%;">应用例句 (Contoh Ayat)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            printList.forEach((item, index) => {
+                let idiomColumnContent = "";
+                if (printMode === 'full') {
+                    idiomColumnContent = `<strong style="font-size: 14px; font-family: 'Times New Roman', serif;">${item.idiom}</strong><br><span style="color:#666; font-size:9px;">${item.pinyin}</span>`;
+                } else {
+                    // 默写测试卷模式：将成语挖空，留下空缺横线给学生手写
+                    idiomColumnContent = `<div style="height: 35px; border-bottom: 1px dashed #666; width: 90%; margin-top: 5px;"></div>`;
+                }
+
+                // 在挖空试卷中，将例句里的成语替换为横线
+                let exampleText = item.example || '';
+                if (item.idiom && exampleText.includes(item.idiom)) {
+                    exampleText = exampleText.replace(new RegExp(item.idiom, 'g'), ' _______ ');
+                }
+
+                tableHtml += `
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${index + 1}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; vertical-align: top;">${idiomColumnContent}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; vertical-align: top; line-height: 1.4;">
+                            <strong style="color: #c2410c;">Maksud:</strong> ${item.defZh}<br>
+                            <span style="font-size: 9px; color: #4b5563;"><strong style="color: #1e3a8a;">BM/Peribahasa:</strong> ${item.defBm || 'Tiada'}</span>
+                        </td>
+                        <td style="border: 1px solid #ddd; padding: 8px; vertical-align: top; color: #555; line-height: 1.4;">
+                            ${exampleText}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tableHtml += `
+                        </tbody>
+                    </table>
+                    <div style="margin-top: 25px; text-align: right; font-size: 9px; color: #888;">
+                        * 马来西亚华语互动教学中心 备考专属资源 (150句成语冲刺) *
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = tableHtml;
+        }
+
+        function triggerPrint() {
+            window.print();
+        }
+
+        // --- Quiz 小测验核心逻辑 (分类联动 + 3大随机题型) ---
         function startQuiz() {
-            // 联动规则：学生正在复习什么分类，测验就只考核什么分类！
             const quizSource = currentPlan;
 
             if (!quizSource || quizSource.length === 0) {
@@ -508,7 +664,6 @@
 
             const questionWordEl = document.getElementById('quiz-question-word');
 
-            // 干扰项从整个大成语库中进行抓取，确保考察混淆度和客观性
             const distractors = allIdioms
                 .filter(item => item.idiom !== currentQ.idiom)
                 .sort(() => 0.5 - Math.random())
@@ -518,7 +673,7 @@
             const optionsContainer = document.getElementById('quiz-options');
 
             if (currentQ.qType === 0) {
-                // 【题型 0】：看词猜意 (无选项前缀)
+                // 【题型 0】：看词猜意
                 questionWordEl.innerHTML = `<span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-sans font-medium">看词猜意</span><br>${currentQ.idiom}`;
                 
                 optionsContainer.innerHTML = options.map(opt => {
@@ -575,7 +730,6 @@
                 buttonEl.classList.remove('border-stone-100', 'hover:border-amber-400');
                 buttonEl.classList.add('border-red-500', 'bg-red-50/60', 'text-red-800');
                 
-                // 智能高亮出标准答案，实现快速纠错反馈
                 allButtons.forEach(btn => {
                     if (btn.getAttribute('onclick').includes('true')) {
                         btn.classList.add('border-green-500', 'bg-green-50/40');
@@ -593,7 +747,6 @@
                 }
             }
 
-            // 1.2秒视听停留，随后平滑跳入下一道题
             setTimeout(() => {
                 quizCurrentIndex++;
                 if (quizCurrentIndex < quizQuestions.length) {
