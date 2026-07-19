@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>常用成语150句</title>
-    <!-- 引入 Tailwind CSS 样式库 -->
+    <title>常用成语150句 - 互动学习中心</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入中文字体 Noto Serif SC 及英文字体 Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     
     <style>
@@ -69,15 +67,16 @@
 <body class="min-h-screen p-4 pb-12 flex flex-col items-center justify-start select-none">
 
     <div id="app" class="w-full max-w-lg pt-4 flex flex-col">
-        <!-- 头部标题区 -->
-        <header class="text-center mb-4">
+        <header class="text-center mb-5">
             <h1 class="text-2xl font-bold text-stone-700 tracking-wide chengyu-title">常用成语150句</h1>
-            <!-- 每日进度动态显示 -->
-            <p id="daily-status" class="text-xs text-stone-400 mt-1 font-medium tracking-wider uppercase">每日复习计划（今日 10 句）</p>
+            <!-- 掌握度进度条（Gamification仪表盘） -->
+            <div class="mt-3 bg-stone-200/60 rounded-full h-2 w-full overflow-hidden flex">
+                <div id="mastery-progress-bar" class="bg-emerald-500 h-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <p id="mastery-status" class="text-[10px] text-stone-400 mt-1.5 font-mono tracking-wider">已掌握 0 / 150 词 (0%)</p>
         </header>
 
-        <!-- 分类筛选导航条 -->
-        <nav class="flex gap-2 flex-wrap justify-center mb-4" id="filterNav">
+        <nav class="flex gap-2 flex-wrap justify-center mb-5" id="filterNav">
             <button class="px-3 py-1 bg-white border border-stone-200 hover:border-stone-400 hover:bg-stone-50 text-stone-600 text-xs rounded-full transition-all active" onclick="filterCategory('全部')">全部</button>
             <button class="px-3 py-1 bg-white border border-stone-200 hover:border-stone-400 hover:bg-stone-50 text-stone-600 text-xs rounded-full transition-all" onclick="filterCategory('人物神态')">🎭 人物神态</button>
             <button class="px-3 py-1 bg-white border border-stone-200 hover:border-stone-400 hover:bg-stone-50 text-stone-600 text-xs rounded-full transition-all" onclick="filterCategory('心理情感')">🧠 心理情感</button>
@@ -87,8 +86,7 @@
             <button class="px-3 py-1 bg-white border border-stone-200 hover:border-stone-400 hover:bg-stone-50 text-stone-600 text-xs rounded-full transition-all" onclick="filterCategory('说话寓理')">💬 说话寓理</button>
         </nav>
 
-        <!-- 功能按钮控制区 -->
-        <div class="grid grid-cols-2 gap-3 mb-4">
+        <div class="grid grid-cols-2 gap-3 mb-5">
             <!-- 错题专项训练按钮 -->
             <button onclick="startWeaknessTraining()" class="bg-white border border-stone-200 py-2.5 px-3 rounded-xl shadow-sm text-center text-stone-700 text-xs font-semibold hover:bg-stone-50 transition-all flex items-center justify-center gap-1.5">
                 🎯 错题训练 (0)
@@ -100,8 +98,7 @@
             </button>
         </div>
 
-        <!-- 核心闪卡容器（缩短了高度，电脑屏幕完美适配） -->
-        <div id="card-container" class="w-full h-[380px] sm:h-[400px] cursor-pointer mb-5">
+        <div id="card-container" class="w-full h-[380px] sm:h-[400px] cursor-pointer mb-5 relative">
             <div id="flip-card" class="w-full h-full relative transform-style-3d">
                 
                 <!-- 卡片正面：成语与大拼音 -->
@@ -111,9 +108,8 @@
                     </div>
                 </div>
 
-                <!-- 卡片背面：全新升级的高级极简复古层次排版 -->
+                <!-- 卡片反面：高级极简复古层次排版（均匀分布 + 14px大字号例句） -->
                 <div class="absolute inset-0 bg-orange-50/40 rounded-2xl border-2 border-orange-100/60 shadow-xl shadow-stone-200/50 flex flex-col p-6 backface-hidden overflow-hidden">
-                    
                     <!-- 内层典雅细线框 -->
                     <div class="absolute inset-2 border border-amber-900/5 rounded-xl pointer-events-none"></div>
 
@@ -134,23 +130,20 @@
                             <p id="card-def-en" class="text-xs italic text-stone-500 leading-relaxed pl-1">No English translation available.</p>
                         </div>
 
-                        <!-- 例句区块（大字号 14px，白底圆角卡片） -->
+                        <!-- 例句区块（独立精致衬底，字号14px，更易阅读） -->
                         <div class="bg-white/80 border border-amber-950/5 p-3.5 rounded-xl shadow-sm">
-                            <div class="inline-flex items-center gap-1 bg-amber-900/5 text-amber-900/70 text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded mb-2">
+                            <div class="inline-flex items-center gap-1 bg-amber-900/5 text-amber-900/70 text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded mb-1.5">
                                 <span>日常应用</span>
                             </div>
                             <p id="card-example" class="text-stone-700 text-[14px] font-medium leading-relaxed pl-0.5 tracking-wide">暂无例句。</p>
                         </div>
                     </div>
-
                 </div>
 
             </div>
         </div>
 
-        <!-- 底部操作与进度反馈 -->
         <div class="w-full flex flex-col items-center gap-3">
-            <!-- 掌握控制按钮 -->
             <div class="grid grid-cols-2 gap-4 w-full">
                 <button onclick="markMastery(false)" class="bg-white border-2 border-stone-200 hover:border-red-400 hover:bg-red-50/30 text-stone-700 py-3 px-6 rounded-xl font-semibold shadow-sm transition-all text-center text-sm flex items-center justify-center gap-2">
                     ❌ 待加强
@@ -165,25 +158,24 @@
         </div>
     </div>
 
-    <!-- Quiz 模态弹窗 -->
+    <div id="toast-container" class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
     <div id="quiz-modal" class="fixed inset-0 bg-black/40 flex items-center justify-center hidden z-50 p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-5 relative flex flex-col max-h-[90vh]">
             <button onclick="closeQuiz()" class="absolute top-3 right-3 text-stone-400 hover:text-stone-600 text-xl font-bold transition-colors">&times;</button>
             
-            <!-- 模态框头部 -->
             <div class="border-b border-stone-100 pb-2 mb-3">
-                <h3 class="text-base font-bold text-stone-800 flex items-center gap-1">🎯 成语释义挑战</h3>
+                <h3 class="text-base font-bold text-stone-800 flex items-center gap-1" id="quiz-title-text">🎯 成语释义挑战</h3>
                 <div class="w-full bg-stone-100 h-1.5 rounded-full mt-2 overflow-hidden">
                     <div id="quiz-progress-bar" class="bg-amber-500 h-full transition-all duration-300" style="width: 0%"></div>
                 </div>
-                <p id="quiz-q-num" class="text-[10px] text-stone-400 mt-1 font-mono">题目 1 / 5</p>
+                <p id="quiz-q-num" class="text-[10px] text-stone-400 mt-1 font-mono">题目 1 / 10</p>
             </div>
 
-            <!-- 答题中间段 -->
             <div class="flex-1 overflow-y-auto mb-1 pr-1">
                 <div id="quiz-question-container">
                     <h4 id="quiz-question-word" class="text-2xl font-serif font-bold text-stone-800 text-center my-3 tracking-wide">-</h4>
-                    <!-- 动态选项（已删除“选项：”前缀） -->
+                    <!-- 动态渲染 4 个选项（已剔除“选项：”前缀） -->
                     <div id="quiz-options" class="space-y-2"></div>
                 </div>
                 
@@ -191,7 +183,7 @@
                 <div id="quiz-result-container" class="hidden text-center py-6">
                     <span class="text-4xl block animate-bounce">🏆</span>
                     <h4 class="text-xl font-bold text-stone-800 mt-3">测验圆满结束！</h4>
-                    <p id="quiz-score" class="text-3xl font-black text-amber-600 my-3">0 / 5</p>
+                    <p id="quiz-score" class="text-3xl font-black text-amber-600 my-3">0 / 10</p>
                     <p id="quiz-eval" class="text-xs text-stone-500 mb-5 px-4">完成得不错！</p>
                     <button onclick="startQuiz()" class="w-full py-2.5 bg-stone-800 text-white rounded-xl text-sm font-medium hover:bg-stone-900 transition-colors">
                         再考一次
@@ -212,10 +204,9 @@
     <script src="data-speech.js"></script>
 
     <!-- ==========================================
-         🧬 主数据组合拼装
+         🧬 主数据合并与展开
          ========================================== -->
     <script>
-        // 将解耦出的各大分类数组拼装为一个主数据库 
         const allIdioms = [
             ...(typeof characterIdioms !== 'undefined' ? characterIdioms : []),
             ...(typeof emotionIdioms !== 'undefined' ? emotionIdioms : []),
@@ -227,22 +218,21 @@
     </script>
 
     <!-- ==========================================
-         🎮 核心学习与小测验交互逻辑层
+         🎮 核心交互逻辑 (无 Alert / Toast响应 / 掌握进度统计)
          ========================================== -->
     <script>
-        let currentPlan = [];       // 当前浏览的成语队列
+        let currentPlan = [];       // 当前学习的成语队列
         let currentIndex = 0;       // 当前成语指针
         let isFlipped = false;      // 卡片是否旋转
         let isWeaknessMode = false;  // 是否处于错题集训模式
-        let activeCategory = '全部'; // 当前选择的过滤类目
+        let activeCategory = '全部'; // 当前选定的过滤器标签
 
         // --- Quiz 测验专用变量 ---
-        let quizQuestions = [];     // 测验题队列
-        let quizCurrentIndex = 0;   // 当前小测验索引
+        let quizQuestions = [];     // 测验题目队列
+        let quizCurrentIndex = 0;   // 当前小测验题号指针
         let quizScore = 0;          // 答对题数
         const QUIZ_TOTAL = 10;      // 每次小测验的目标题量已调整为 10 题
 
-        // 完美拼音标注对齐 HTML 拼装核心方法
         function generateRubyMarkup(idiom, pinyinStr) {
             const chars = idiom.split('');
             const pinyins = pinyinStr.split(' ');
@@ -260,16 +250,15 @@
                 let wrongList = JSON.parse(localStorage.getItem('chengyu_wrong_list')) || [];
                 updateWeaknessButton(wrongList.length);
 
-                // 根据当前的选择筛选出对应类别的数据
                 filterCategoryData();
                 setupFlipEvent();
                 renderCard();
+                updateMasteryProgress();
             } catch (error) {
                 console.error("初始化错误:", error);
             }
         }
 
-        // 筛选数据池
         function filterCategoryData() {
             if (activeCategory === '全部') {
                 currentPlan = [...allIdioms];
@@ -277,12 +266,6 @@
                 currentPlan = allIdioms.filter(item => item.category === activeCategory);
             }
             currentIndex = 0;
-            const statusEl = document.getElementById('daily-status');
-            if (statusEl) {
-                statusEl.innerText = isWeaknessMode 
-                    ? `🎯 错题专项集训中（共 ${currentPlan.length} 词）` 
-                    : `正在学习：${activeCategory}（共 ${currentPlan.length} 词）`;
-            }
         }
 
         // 渲染单张卡片
@@ -298,7 +281,7 @@
             if (flipCardEl) flipCardEl.classList.remove('rotate-y-180');
             isFlipped = false;
 
-            // 1. 渲染正面（完美注音对齐）
+            // 1. 渲染正面（完美对齐注音）
             const rubyContainer = document.getElementById('card-idiom-ruby');
             if (rubyContainer) {
                 rubyContainer.innerHTML = generateRubyMarkup(currentIdiom.idiom, currentIdiom.pinyin);
@@ -338,7 +321,42 @@
             }
         }
 
-        // 标记掌握/待加强状态
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const bgClass = type === 'success' ? 'bg-stone-800 text-white' : 'bg-red-50 border border-red-200 text-red-800';
+            
+            toast.className = `${bgClass} px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold tracking-wide flex items-center gap-1.5 animate-bounce pointer-events-auto transition-all duration-300`;
+            toast.innerHTML = message;
+            
+            container.appendChild(toast);
+            
+            // 2.5秒后自动渐隐销毁
+            setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 2500);
+        }
+
+        function updateMasteryProgress() {
+            let wrongList = JSON.parse(localStorage.getItem('chengyu_wrong_list')) || [];
+            // 所有非错题本中的成语，默认计为“已掌握”
+            const totalWords = allIdioms.length;
+            const wrongCount = wrongList.length;
+            const masteredCount = Math.max(0, totalWords - wrongCount);
+            
+            const percent = totalWords > 0 ? Math.round((masteredCount / totalWords) * 100) : 0;
+            
+            const bar = document.getElementById('mastery-progress-bar');
+            if (bar) bar.style.width = `${percent}%`;
+            
+            const txt = document.getElementById('mastery-status');
+            if (txt) txt.innerText = `已掌握 ${masteredCount} / ${totalWords} 词 (${percent}%)`;
+        }
+
         function markMastery(isMastered) {
             if (currentPlan.length === 0) return;
             const currentIdiom = currentPlan[currentIndex];
@@ -347,33 +365,36 @@
 
             if (!isMastered) {
                 if (!wrongList.some(item => item.idiom === currentIdiomText)) { wrongList.push(currentIdiom); }
+                showToast("📌 已加入待加强训练库");
             } else {
                 wrongList = wrongList.filter(item => item.idiom !== currentIdiomText);
+                showToast("🎉 太棒了，这个词已经熟练掌握！");
             }
 
             localStorage.setItem('chengyu_wrong_list', JSON.stringify(wrongList));
             updateWeaknessButton(wrongList.length);
+            updateMasteryProgress();
             currentIndex++;
             
             if (currentIndex >= currentPlan.length) {
                 if (isWeaknessMode) {
-                    alert("🎉 太棒了！本轮错题专项训练已完成！");
+                    showToast("👑 太棒了！本轮错题专项集训全部通关！");
                     isWeaknessMode = false;
                     filterCategory('全部');
                     return;
                 } else {
-                    alert("🎉 该分类成语已全部浏览完毕！");
+                    showToast("🌟 该类目的成语已全部通读完毕！");
                     currentIndex = 0; 
                 }
             }
             renderCard();
         }
 
-        // 开启错题专项训练
+        // 启动错题专项训练
         function startWeaknessTraining() {
             const wrongList = JSON.parse(localStorage.getItem('chengyu_wrong_list')) || [];
             if (wrongList.length === 0) {
-                alert("✨ 赞！当前没有待加强的成语！");
+                showToast("✨ 极好！当前没有任何待加强的错词！");
                 return;
             }
             isWeaknessMode = true;
@@ -384,12 +405,10 @@
             renderCard();
         }
 
-        // 导航栏筛选器
         function filterCategory(categoryName) {
             isWeaknessMode = false;
             activeCategory = categoryName;
 
-            // 样式更新
             const buttons = document.querySelectorAll('#filterNav button');
             buttons.forEach(btn => {
                 if (btn.innerText.includes(categoryName)) {
@@ -417,32 +436,35 @@
 
 
         // ==========================================
-        // 3. 核心 Quiz (小测验) 系统
+        // 💬 Quiz 小测验核心逻辑 (分类联动 + 3大随机题型)
         // ==========================================
+
         function startQuiz() {
-            // 智能选择数据源：当前分类展示什么，测验就考什么
-            const quizSource = currentPlan.length > 0 ? currentPlan : allIdioms;
+            // 联动规则：学生正在复习什么分类，测验就只考核什么分类！
+            const quizSource = currentPlan;
 
             if (!quizSource || quizSource.length === 0) {
-                alert("当前选中的类目或错题本下暂无成语，无法开始小测验！");
+                showToast("⚠️ 当前选中的类目下暂无成语，无法开始测验！", "error");
                 return;
             }
             if (allIdioms.length < 4) {
-                alert("数据源成语总数量不足 4 个，无法生成选择题选项！");
+                showToast("⚠️ 全库成语总数少于4个，无法生成选择干扰项！", "error");
                 return;
             }
 
             document.getElementById('quiz-question-container').classList.remove('hidden');
             document.getElementById('quiz-result-container').classList.add('hidden');
 
-            // 将当前分类下的成语打乱
+            const titleText = isWeaknessMode ? "错题本挑战" : `${activeCategory} 专项挑战`;
+            document.getElementById('quiz-title-text').innerText = `🎯 ${titleText}`;
+
             const shuffled = [...quizSource].sort(() => 0.5 - Math.random());
             
-            // 自适应题量：如果当前分类不足 10 个词，则有多少考多少
+            // 每次固定 10 题（如果当前类目不足10题，则有多少考多少）
             const actualTotal = Math.min(QUIZ_TOTAL, quizSource.length);
             quizQuestions = shuffled.slice(0, actualTotal);
             
-            // 混合三种随机题型
+            // 为每道题随机分配三种教学题型之一
             quizQuestions = quizQuestions.map(q => {
                 return {
                     ...q,
@@ -470,7 +492,7 @@
 
             const questionWordEl = document.getElementById('quiz-question-word');
 
-            // 干扰项依旧从全库 150 个成语中抽取，确保选项的多样性与干扰质量
+            // 干扰项从整个大成语库中进行抓取，确保考察混淆度和客观性
             const distractors = allIdioms
                 .filter(item => item.idiom !== currentQ.idiom)
                 .sort(() => 0.5 - Math.random())
@@ -480,7 +502,7 @@
             const optionsContainer = document.getElementById('quiz-options');
 
             if (currentQ.qType === 0) {
-                // 【题型 0】：看成语，选释义 (原汁原味，无“选项：”字样)
+                // 【题型 0】：看词猜意 (无选项前缀)
                 questionWordEl.innerHTML = `<span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-sans font-medium">看词猜意</span><br>${currentQ.idiom}`;
                 
                 optionsContainer.innerHTML = options.map(opt => {
@@ -493,7 +515,7 @@
                 }).join('');
 
             } else if (currentQ.qType === 1) {
-                // 【题型 1】：看释义，选成语 (反向思维)
+                // 【题型 1】：根据释义选词
                 questionWordEl.innerHTML = `<span class="text-[10px] bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-sans font-medium block w-max mx-auto mb-2">根据释义选成语</span><p class="text-base font-medium font-sans px-4 text-stone-700 leading-relaxed text-left">${currentQ.defZh}</p>`;
                 
                 optionsContainer.innerHTML = options.map(opt => {
@@ -506,7 +528,7 @@
                 }).join('');
 
             } else if (currentQ.qType === 2) {
-                // 【题型 2】：看例句填空，选成语 (实战应用)
+                // 【题型 2】：语境例句填空
                 let exampleText = currentQ.example || '暂无例句。';
                 if (currentQ.idiom && exampleText.includes(currentQ.idiom)) {
                     exampleText = exampleText.replace(currentQ.idiom, ` ______ `);
@@ -537,24 +559,25 @@
                 buttonEl.classList.remove('border-stone-100', 'hover:border-amber-400');
                 buttonEl.classList.add('border-red-500', 'bg-red-50/60', 'text-red-800');
                 
-                // 亮绿正确答案
+                // 智能高亮出标准答案，实现快速纠错反馈
                 allButtons.forEach(btn => {
                     if (btn.getAttribute('onclick').includes('true')) {
                         btn.classList.add('border-green-500', 'bg-green-50/40');
                     }
                 });
 
-                // 自动将错题存入错题库
+                // 答错的成语自动写入本地错题库
                 let wrongList = JSON.parse(localStorage.getItem('chengyu_wrong_list')) || [];
                 const currentQ = quizQuestions[quizCurrentIndex];
                 if (!wrongList.some(item => item.idiom === currentQ.idiom)) {
                     wrongList.push(currentQ);
                     localStorage.setItem('chengyu_wrong_list', JSON.stringify(wrongList));
                     updateWeaknessButton(wrongList.length);
+                    updateMasteryProgress();
                 }
             }
 
-            // 1.2 秒反馈停留，然后进入下一题
+            // 1.2秒视听停留，随后平滑跳入下一道题
             setTimeout(() => {
                 quizCurrentIndex++;
                 if (quizCurrentIndex < quizQuestions.length) {
@@ -575,21 +598,19 @@
             let evaluation = "再接再厉，多刷刷闪卡吧！";
             if (quizScore === quizQuestions.length) {
                 evaluation = "👑 太厉害了！满分通关！";
-            } else if (quizScore >= 4) {
+            } else if (quizScore >= Math.floor(quizQuestions.length * 0.8)) {
                 evaluation = "🌟 优秀！底子非常扎实！";
-            } else if (quizScore >= 3) {
+            } else if (quizScore >= Math.floor(quizQuestions.length * 0.6)) {
                 evaluation = "👍 及格啦，答错的词已经自动帮你放入错题库啰！";
             }
             document.getElementById('quiz-eval').innerText = evaluation;
         }
 
-        // 预载入口
+        // 窗口预载生命周期
         window.onload = function() {
             initApp();
-            // 默认让第一个按钮激活样式
             filterCategory('全部');
         };
     </script>
 </body>
 </html>
-```
