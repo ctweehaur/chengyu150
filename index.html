@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>常用成语150句 - 互动学习中心</title>
+    <title>常用成语150句 - 马来西亚互动学习中心</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     
@@ -64,10 +64,10 @@
         }
     </style>
 </head>
-<body class="min-h-screen p-4 pb-12 flex flex-col items-center justify-start select-none">
+<body class="min-h-screen p-4 flex flex-col items-center justify-start select-none">
 
     <div id="app" class="w-full max-w-lg pt-4 flex flex-col">
-        <header class="text-center mb-5">
+        <header class="text-center mb-4">
             <h1 class="text-2xl font-bold text-stone-700 tracking-wide chengyu-title">常用成语150句</h1>
             <!-- 掌握度进度条（Gamification仪表盘） -->
             <div class="mt-3 bg-stone-200/60 rounded-full h-2 w-full overflow-hidden flex">
@@ -76,7 +76,8 @@
             <p id="mastery-status" class="text-[10px] text-stone-400 mt-1.5 font-mono tracking-wider">已掌握 0 / 150 词 (0%)</p>
         </header>
 
-        <nav class="flex gap-2 flex-wrap justify-center mb-5" id="filterNav">
+        <!-- 分类筛选导航栏 -->
+        <nav class="flex gap-1.5 flex-wrap justify-center mb-4" id="filterNav">
             <button class="px-3 py-1 bg-white border border-stone-200 hover:border-stone-400 hover:bg-stone-50 text-stone-600 text-xs rounded-full transition-all active" onclick="filterCategory('全部')">全部</button>
             <button class="px-3 py-1 bg-white border border-stone-200 hover:border-stone-400 hover:bg-stone-50 text-stone-600 text-xs rounded-full transition-all" onclick="filterCategory('人物神态')">🎭 人物神态</button>
             <button class="px-3 py-1 bg-white border border-stone-200 hover:border-stone-400 hover:bg-stone-50 text-stone-600 text-xs rounded-full transition-all" onclick="filterCategory('心理情感')">🧠 心理情感</button>
@@ -86,7 +87,7 @@
             <button class="px-3 py-1 bg-white border border-stone-200 hover:border-stone-400 hover:bg-stone-50 text-stone-600 text-xs rounded-full transition-all" onclick="filterCategory('说话寓理')">💬 说话寓理</button>
         </nav>
 
-        <div class="grid grid-cols-2 gap-3 mb-5">
+        <div class="grid grid-cols-2 gap-3 mb-4">
             <!-- 错题专项训练按钮 -->
             <button onclick="startWeaknessTraining()" class="bg-white border border-stone-200 py-2.5 px-3 rounded-xl shadow-sm text-center text-stone-700 text-xs font-semibold hover:bg-stone-50 transition-all flex items-center justify-center gap-1.5">
                 🎯 错题训练 (0)
@@ -98,7 +99,7 @@
             </button>
         </div>
 
-        <div id="card-container" class="w-full h-[380px] sm:h-[400px] cursor-pointer mb-5 relative">
+        <div id="card-container" class="w-full h-[380px] sm:h-[400px] cursor-pointer mb-4 relative">
             <div id="flip-card" class="w-full h-full relative transform-style-3d">
                 
                 <!-- 卡片正面：成语与大拼音 -->
@@ -108,34 +109,44 @@
                     </div>
                 </div>
 
-                <!-- 卡片反面：高级极简复古层次排版（均匀分布 + 14px大字号例句） -->
-                <div class="absolute inset-0 bg-orange-50/40 rounded-2xl border-2 border-orange-100/60 shadow-xl shadow-stone-200/50 flex flex-col p-6 backface-hidden overflow-hidden">
+                <!-- 卡片反面：高级极简复古层次排版（双栏翻译 + 14px大字号例句） -->
+                <div class="absolute inset-0 bg-orange-50/40 rounded-2xl border-2 border-orange-100/60 shadow-xl shadow-stone-200/50 flex flex-col p-5 backface-hidden overflow-hidden">
                     <!-- 内层典雅细线框 -->
                     <div class="absolute inset-2 border border-amber-900/5 rounded-xl pointer-events-none"></div>
 
-                    <div class="relative z-10 flex flex-col justify-between h-full py-1">
+                    <div class="relative z-10 flex flex-col justify-between h-full py-0.5">
                         <!-- 中文释义区块 -->
                         <div>
-                            <div class="inline-flex items-center gap-1 bg-amber-700/10 text-amber-800 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md mb-2">
-                                <span>释义</span>
+                            <div class="inline-flex items-center gap-1 bg-amber-700/10 text-amber-800 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md mb-1.5">
+                                <span>华文释义 (Maksud)</span>
                             </div>
-                            <p id="card-def-zh" class="text-base font-semibold text-stone-800 leading-relaxed pl-1">暂无释义</p>
+                            <p id="card-def-zh" class="text-[15px] font-semibold text-stone-800 leading-relaxed pl-1">暂无释义</p>
                         </div>
 
-                        <!-- 英文翻译区块 -->
-                        <div>
-                            <div class="inline-flex items-center gap-1 bg-stone-200/60 text-stone-600 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md mb-1.5">
-                                <span>TRANSLATION</span>
+                        <!-- 翻译双栏区块（左英文，右国文，省空间，防滚动） -->
+                        <div class="grid grid-cols-2 gap-3 border-t border-b border-amber-900/5 py-2.5 my-1">
+                            <!-- 英文翻译 -->
+                            <div>
+                                <div class="inline-flex items-center gap-1 bg-stone-200/60 text-stone-600 text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded mb-1">
+                                    <span>ENGLISH</span>
+                                </div>
+                                <p id="card-def-en" class="text-[11px] italic text-stone-600 leading-snug pl-0.5">No translation.</p>
                             </div>
-                            <p id="card-def-en" class="text-xs italic text-stone-500 leading-relaxed pl-1">No English translation available.</p>
+                            <!-- 马来文翻译 (BM / Peribahasa) -->
+                            <div>
+                                <div class="inline-flex items-center gap-1 bg-red-100/50 text-red-800 text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded mb-1">
+                                    <span>B. MELAYU / PERIBAHASA</span>
+                                </div>
+                                <p id="card-def-bm" class="text-[11px] text-stone-700 leading-snug pl-0.5 font-medium">Tiada terjemahan.</p>
+                            </div>
                         </div>
 
-                        <!-- 例句区块（独立精致衬底，字号14px，更易阅读） -->
+                        <!-- 例句区块（独立精致衬底，字号13px，更易阅读） -->
                         <div class="bg-white/80 border border-amber-950/5 p-3.5 rounded-xl shadow-sm">
                             <div class="inline-flex items-center gap-1 bg-amber-900/5 text-amber-900/70 text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded mb-1.5">
-                                <span>日常应用</span>
+                                <span>日常应用 (Contoh Ayat)</span>
                             </div>
-                            <p id="card-example" class="text-stone-700 text-[14px] font-medium leading-relaxed pl-0.5 tracking-wide">暂无例句。</p>
+                            <p id="card-example" class="text-stone-700 text-[13px] font-medium leading-relaxed pl-0.5 tracking-wide">暂无例句。</p>
                         </div>
                     </div>
                 </div>
@@ -146,10 +157,10 @@
         <div class="w-full flex flex-col items-center gap-3">
             <div class="grid grid-cols-2 gap-4 w-full">
                 <button onclick="markMastery(false)" class="bg-white border-2 border-stone-200 hover:border-red-400 hover:bg-red-50/30 text-stone-700 py-3 px-6 rounded-xl font-semibold shadow-sm transition-all text-center text-sm flex items-center justify-center gap-2">
-                    ❌ 待加强
+                    ❌ 待加强 (Belum Kuasai)
                 </button>
                 <button onclick="markMastery(true)" class="bg-stone-800 hover:bg-stone-900 text-white py-3 px-6 rounded-xl font-semibold shadow-md transition-all text-center text-sm flex items-center justify-center gap-2">
-                    ✅ 已掌握
+                    ✅ 已掌握 (Sudah Kuasai)
                 </button>
             </div>
 
@@ -158,8 +169,10 @@
         </div>
     </div>
 
+    <!-- 优雅 Toast 气泡提醒容器 -->
     <div id="toast-container" class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
+    <!-- Quiz 小测验弹窗 -->
     <div id="quiz-modal" class="fixed inset-0 bg-black/40 flex items-center justify-center hidden z-50 p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-5 relative flex flex-col max-h-[90vh]">
             <button onclick="closeQuiz()" class="absolute top-3 right-3 text-stone-400 hover:text-stone-600 text-xl font-bold transition-colors">&times;</button>
@@ -287,9 +300,10 @@
                 rubyContainer.innerHTML = generateRubyMarkup(currentIdiom.idiom, currentIdiom.pinyin);
             }
 
-            // 2. 渲染反面
+            // 2. 渲染反面 (中文、英文、马来文对照)
             document.getElementById('card-def-zh').innerText = currentIdiom.defZh || '暂无释义';
-            document.getElementById('card-def-en').innerText = currentIdiom.defEn || 'No English translation available.';
+            document.getElementById('card-def-en').innerText = currentIdiom.defEn || 'No translation available.';
+            document.getElementById('card-def-bm').innerText = currentIdiom.defBm || 'Tiada terjemahan.';
             
             const exampleEl = document.getElementById('card-example');
             if (exampleEl) {
@@ -321,6 +335,7 @@
             }
         }
 
+        // 优雅气泡提示
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -341,6 +356,7 @@
             }, 2500);
         }
 
+        // 终身掌握进度统计
         function updateMasteryProgress() {
             let wrongList = JSON.parse(localStorage.getItem('chengyu_wrong_list')) || [];
             // 所有非错题本中的成语，默认计为“已掌握”
