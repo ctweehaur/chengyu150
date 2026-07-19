@@ -6,149 +6,36 @@
     <title>常用成语150句</title>
     <!-- 引入外部样式文件 style.css -->
     <link rel="stylesheet" href="style.css">
-    <!-- 引入 Tailwind CSS 样式库（用于快速响应式网格布局与组件间距） -->
+    <!-- 引入 Tailwind CSS 库 -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入中文字体 Noto Serif SC 及英文字体 Inter -->
+    <!-- 引入 Google 字体 -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
-<body class="min-h-screen p-4 pb-12 flex flex-col items-center justify-start select-none">
+<body class="min-h-screen p-4 pb-12 flex flex-col items-center justify-start select-none bg-stone-50">
 
-    <!-- 网页核心容器 -->
     <div id="app" class="w-full max-w-md pt-6 flex flex-col">
         <!-- 头部标题区 -->
         <header class="text-center mb-6">
-            <h1 class="text-2xl font-bold text-stone-700 tracking-wide chengyu-title">常用成语150句</h1>
-            <!-- 每日复习计划进度动态显示 -->
-            <p id="daily-status" class="text-xs text-stone-400 mt-2 font-medium tracking-wider uppercase">正在初始化今日计划...</p>
+            <h1 class="text-2xl font-bold text-stone-700 tracking-wide">常用成语150句</h1>
+            <p id="daily-status" class="text-xs text-stone-400 mt-2 font-medium tracking-wider uppercase">每日复习计划已准备就绪</p>
         </header>
 
-        <!-- 主面板：卡片浏览模式 -->
-        <div id="flashcard-panel" class="block">
-            <!-- 闪卡容器（点击卡片非按钮区域可实现翻转） -->
-            <div id="card-container" class="perspective-container relative h-96 mb-6 cursor-pointer">
-                <div id="flip-card" class="card-inner relative w-full h-full">
-                    
-                    <!-- 卡片正面：成语 + 拼音（采用标准 ruby 注音） -->
-                    <div class="absolute inset-0 bg-white rounded-2xl border border-stone-200/80 shadow-soft flex flex-col items-center justify-center p-8 backface-hidden">
-                        <div id="card-idiom-ruby" class="chengyu-title text-4xl sm:text-5xl text-stone-800 flex justify-center items-center gap-2">
-                            <!-- 由 JavaScript 动态生成带拼音的汉字 -->
-                        </div>
-                    </div>
-                    
-                    <!-- 卡片反面：释义 + 英文 + 例句（全新精美莫兰迪层级排版） -->
-                    <div class="absolute inset-0 bg-white rounded-2xl border border-stone-200/80 shadow-soft flex flex-col p-6 rotate-y-180 backface-hidden justify-between overflow-y-auto">
-                        <!-- 顶端雅致状态栏 -->
-                        <div class="flex justify-between items-center pb-3 border-b border-stone-100/80 mb-2">
-                            <span class="text-[10px] font-bold text-stone-400 tracking-widest uppercase">DETAIL / 详情</span>
-                            <span class="text-[10px] font-medium text-amber-800 bg-amber-50/80 px-2 py-0.5 rounded-full tracking-wider">精读复习卡</span>
-                        </div>
-
-                        <!-- 核心信息分层显示区 -->
-                        <div class="flex-grow flex flex-col justify-center space-y-4 my-auto">
-                            <!-- 中文释义（书香气特色排版） -->
-                            <div class="relative pl-3 border-l-2 border-stone-700/60">
-                                <span class="text-[10px] font-bold text-amber-800/80 tracking-wider block mb-1">【释义】</span>
-                                <p id="card-def-zh" class="text-stone-800 text-sm leading-relaxed font-semibold tracking-wide"></p>
-                            </div>
-
-                            <!-- 英文解释（现代学术风排版） -->
-                            <div class="relative pl-3 border-l-2 border-stone-300">
-                                <span class="text-[10px] font-bold text-stone-400 tracking-wider block mb-1">【TRANSLATION】</span>
-                                <p id="card-def-en" class="text-stone-500 text-xs italic leading-relaxed font-medium"></p>
-                            </div>
-                        </div>
-
-                        <!-- 真实场景例句区（高质感引言框，右下角淡雅双引号装饰） -->
-                        <div class="bg-stone-50/80 p-4 rounded-xl border border-stone-100/70 mt-4 relative overflow-hidden">
-                            <!-- 背景装饰双引号 -->
-                            <div class="absolute right-2 bottom-0 text-stone-200/50 text-5xl font-serif select-none pointer-events-none">”</div>
-                            
-                            <div class="flex items-center gap-1.5 mb-1.5">
-                                <svg class="w-3.5 h-3.5 text-stone-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-                                </svg>
-                                <span class="text-[10px] font-bold text-stone-400 tracking-widest uppercase">例句 / Context</span>
-                            </div>
-                            <p id="card-example" class="text-stone-600 text-xs leading-relaxed font-medium relative z-10 pl-1"></p>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- 控制区：掌握/待加强 按钮（轻触热区放大，不易产生误触） -->
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                <button onclick="markMastery(false)" class="py-4 bg-white border border-stone-200 hover:border-stone-300 hover:bg-stone-50 active:bg-stone-100 rounded-xl text-stone-500 transition-all text-sm font-semibold tracking-wider flex items-center justify-center gap-1.5 shadow-xs">
-                    ❌ 待加强
-                </button>
-                <button onclick="markMastery(true)" class="py-4 bg-stone-700 hover:bg-stone-800 active:bg-stone-900 text-white rounded-xl transition-all text-sm font-semibold tracking-wider flex items-center justify-center gap-1.5 shadow-sm">
-                    ✅ 已掌握
-                </button>
-            </div>
-
-            <!-- 触发测试入口：展示当前有多少个“待加强”项 -->
-            <button id="quiz-entry-btn" onclick="startQuiz()" class="w-full py-4 border border-dashed border-stone-300 rounded-xl text-stone-500 font-medium bg-transparent hover:bg-stone-100/50 hover:border-stone-400 transition-all text-xs tracking-wider">
-                🎯 挑战未掌握项 (0)
-            </button>
+        <!-- 错题专项训练入口 -->
+        <button onclick="startWeaknessTraining()" class="mb-6 w-full py-3 border border-stone-300 rounded-xl text-stone-600 font-medium bg-white hover:bg-stone-100 transition-all text-sm tracking-wider shadow-sm">
+            🎯 开启错题专项训练
+        </button>
+        
+        <!-- 闪卡容器 -->
+        <div class="card-container relative h-96 mb-6">
+            <!-- 逻辑生成的卡片内容将注入此处 -->
         </div>
 
-        <!-- 辅面板：智能测试 (Quiz) 模式 -->
-        <div id="quiz-panel" class="hidden flex-col bg-white rounded-2xl border border-stone-200/80 p-6 shadow-soft min-h-[400px] justify-between">
-            <div>
-                <!-- 测验头部信息 -->
-                <div class="flex justify-between items-center mb-6 pb-3 border-b border-stone-100">
-                    <span class="text-xs font-bold text-amber-700/80 bg-amber-50 px-2 py-0.5 rounded tracking-wide">智能测试</span>
-                    <span id="quiz-progress" class="text-xs text-stone-400 font-semibold">题 1 / 10</span>
-                </div>
-
-                <!-- 题目内容区 -->
-                <div class="mb-6">
-                    <p id="quiz-question-type" class="text-[10px] text-stone-400 font-bold tracking-widest uppercase mb-2"></p>
-                    <p id="quiz-question" class="text-stone-800 text-base leading-relaxed font-medium bg-stone-50/50 p-4 rounded-xl border border-stone-100"></p>
-                </div>
-
-                <!-- 选项列表 -->
-                <div id="quiz-options" class="space-y-3">
-                    <!-- 由 JavaScript 动态渲染 4 个单选按钮 -->
-                </div>
-            </div>
-
-            <!-- 测验底端退出 -->
-            <div class="mt-6 pt-4 border-t border-stone-100 flex justify-between items-center">
-                <button onclick="exitQuiz()" class="text-xs text-stone-400 hover:text-stone-600 transition-colors font-medium py-2 px-1">
-                    🚪 退出测试
-                </button>
-            </div>
-        </div>
-
-        <!-- 结果面板：测验完结报告 -->
-        <div id="result-panel" class="hidden flex-col bg-white rounded-2xl border border-stone-200/80 p-8 shadow-soft text-center">
-            <div class="text-4xl mb-4">🎉</div>
-            <h3 class="text-lg font-bold text-stone-800 mb-2">测试完成！</h3>
-            <p id="quiz-score-report" class="text-sm text-stone-500 mb-6"></p>
-            
-            <!-- 错题反馈区 -->
-            <div id="wrong-summary" class="text-left bg-stone-50 p-4 rounded-xl mb-6 border border-stone-100 max-h-40 overflow-y-auto hidden">
-                <h4 class="text-xs font-bold text-stone-400 tracking-wider mb-2">仍需加强的词汇：</h4>
-                <ul id="wrong-list" class="list-disc list-inside text-xs text-stone-600 space-y-1"></ul>
-            </div>
-
-            <button onclick="exitQuiz()" class="w-full py-3.5 bg-stone-700 hover:bg-stone-800 text-white font-semibold rounded-xl text-xs tracking-wider transition-all">
-                返回卡片继续学习
-            </button>
-        </div>
+        <!-- 底部提示 -->
+        <div id="progress-indicator" class="text-center text-xs text-stone-400 font-medium"></div>
     </div>
 
-    <!-- 
-      ==================================================================
-      【引入外部 JS 文件】
-      确保这两个脚本文件和 index.html 存放在同一个文件夹路径下。
-      ==================================================================
-    -->
-    <!-- 引入成语数据库 -->
+    <!-- 核心文件引入 -->
     <script src="data.js"></script>
-    <!-- 引入页面逻辑控制脚本 -->
     <script src="script.js"></script>
-
 </body>
 </html>
