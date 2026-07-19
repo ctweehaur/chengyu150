@@ -55,12 +55,13 @@ function initApp() {
         renderCard();
     } catch (error) {
         console.error("初始化失败:", error);
-        document.getElementById('daily-status').innerText = "系统初始化异常，请刷新重试";
+        const statusEl = document.getElementById('daily-status');
+        if (statusEl) statusEl.innerText = "系统初始化异常，请刷新重试";
     }
 }
 
 // ==========================================
-// 3. 卡片渲染与翻转逻辑
+// 3. 卡片渲染与翻转逻辑（包含全面数据兼容与防空白保护）
 // ==========================================
 function renderCard() {
     if (currentPlan.length === 0) {
@@ -80,29 +81,35 @@ function renderCard() {
     if (flipCardEl) flipCardEl.classList.remove('rotate-y-180');
     isFlipped = false;
 
-    // 1. 渲染正面：拼音注音 (Ruby)
+    // 1. 渲染正面：拼音注音 (Ruby) -> 增强了兼容性防御，绝对不空白
     const rubyContainer = document.getElementById('card-idiom-ruby');
-    if (rubyContainer && currentIdiom.characters) {
-        rubyContainer.innerHTML = currentIdiom.characters.map(char => `
-            <ruby class="flex flex-col items-center">
-                <rt class="text-[10px] sm:text-xs text-stone-400 font-sans tracking-normal lowercase mb-1">${char.pinyin}</rt>
-                <span class="font-serif font-bold">${char.char}</span>
-            </ruby>
-        `).join('');
+    if (rubyContainer) {
+        if (currentIdiom.characters && Array.isArray(currentIdiom.characters)) {
+            // 方案 A：如果 data.js 里有分解的字和拼音数组
+            rubyContainer.innerHTML = currentIdiom.characters.map(char => `
+                <ruby class="flex flex-col items-center">
+                    <rt class="text-[10px] sm:text-xs text-stone-400 font-sans tracking-normal lowercase mb-1">${char.pinyin || ''}</rt>
+                    <span class="font-serif font-bold">${char.char || ''}</span>
+                </ruby>
+            `).join('');
+        } else {
+            // 方案 B：如果 data.js 只有普通的文本（自动适配各类常见属性名如 idiom, word）
+            const textToShow = currentIdiom.idiom || currentIdiom.word || "未知成语";
+            rubyContainer.innerHTML = `<span class="font-serif font-bold">${textToShow}</span>`;
+        }
     }
 
     // 2. 渲染反面：释义、翻译、例句
     const defZhEl = document.getElementById('card-def-zh');
-    if (defZhEl) defZhEl.innerText = currentIdiom.definition_zh || '暂无释义';
+    if (defZhEl) defZhEl.innerText = currentIdiom.definition_zh || currentIdiom.meaning || '暂无释义';
 
     const defEnEl = document.getElementById('card-def-en');
-    if (defEnEl) defEnEl.innerText = currentIdiom.definition_en || 'No English translation available.';
+    if (defEnEl) defEnEl.innerText = currentIdiom.definition_en || currentIdiom.translation || 'No English translation available.';
 
     const exampleEl = document.getElementById('card-example');
     if (exampleEl) {
-        // 例句成语挖空处理
-        const idiomText = currentIdiom.idiom;
-        let exampleText = currentIdiom.example || '暂无例句。';
+        const idiomText = currentIdiom.idiom || currentIdiom.word || '';
+        let exampleText = currentIdiom.example || currentIdiom.sentence || '暂无例句。';
         if (idiomText && exampleText.includes(idiomText)) {
             exampleText = exampleText.replace(idiomText, `______`);
         }
@@ -143,15 +150,16 @@ function markMastery(isMastered) {
 
     const currentIdiom = currentPlan[currentIndex];
     let wrongList = JSON.parse(localStorage.getItem('chengyu_wrong_list')) || [];
+    const currentIdiomText = currentIdiom.idiom || currentIdiom.word || '';
 
     if (!isMastered) {
         // 点击“待加强”：如果错题库里没有，就加进去
-        if (!wrongList.some(item => item.idiom === currentIdiom.idiom)) {
+        if (!wrongList.some(item => (item.idiom || item.word) === currentIdiomText)) {
             wrongList.push(currentIdiom);
         }
     } else {
         // 点击“已掌握”：如果错题库里有，就移除它（移出集训）
-        wrongList = wrongList.filter(item => item.idiom !== currentIdiom.idiom);
+        wrongList = wrongList.filter(item => (item.idiom || item.word) !== currentIdiomText);
     }
 
     // 保存错题库状态
@@ -170,8 +178,10 @@ function markMastery(isMastered) {
             alert("🎉 今日 10 个成语已全部浏览完毕！");
             // 记录今日完成状态
             const savedProgress = JSON.parse(localStorage.getItem('chengyu_progress'));
-            savedProgress.index = currentIndex;
-            localStorage.setItem('chengyu_progress', JSON.stringify(savedProgress));
+            if (savedProgress) {
+                savedProgress.index = currentIndex;
+                localStorage.setItem('chengyu_progress', JSON.stringify(savedProgress));
+            }
             currentIndex = currentPlan.length - 1; // 停留在最后一张
         }
     } else if (!isWeaknessMode) {
