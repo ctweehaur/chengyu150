@@ -61,7 +61,7 @@ function initApp() {
 }
 
 // ==========================================
-// 3. 卡片渲染与翻转逻辑（已放大拼音字号）
+// 3. 卡片渲染与翻转逻辑（正反面全方位深度兼容）
 // ==========================================
 function renderCard() {
     if (currentPlan.length === 0) {
@@ -81,14 +81,13 @@ function renderCard() {
     if (flipCardEl) flipCardEl.classList.remove('rotate-y-180');
     isFlipped = false;
 
-    // 1. 渲染正面：智能处理各种拼音格式，并放大了拼音显示
+    // 1. 渲染正面：拼音注音 (Ruby)
     const rubyContainer = document.getElementById('card-idiom-ruby');
     if (rubyContainer) {
         const idiomText = currentIdiom.idiom || currentIdiom.word || "未知成语";
         const pinyinText = currentIdiom.pinyin || "";
 
         if (currentIdiom.characters && Array.isArray(currentIdiom.characters)) {
-            // 格式一：带有分解的字和拼音数组
             rubyContainer.innerHTML = currentIdiom.characters.map(char => `
                 <ruby class="flex flex-col items-center mx-1">
                     <rt class="text-lg sm:text-xl text-stone-500 font-sans tracking-normal lowercase mb-2 font-medium">${char.pinyin || ''}</rt>
@@ -96,13 +95,11 @@ function renderCard() {
                 </ruby>
             `).join('');
         } else if (pinyinText) {
-            // 格式二：成语是文本，拼音是用空格隔开的字符串（例如："jù jīng huì shén"）
-            const pinyinArray = pinyinText.split(/\s+/); // 按空格拆分拼音
+            const pinyinArray = pinyinText.split(/\s+/);
             let rubyHtml = "";
-            
             for (let i = 0; i < idiomText.length; i++) {
                 const char = idiomText[i];
-                const py = pinyinArray[i] || ""; // 防止拼音和汉字数量对不上
+                const py = pinyinArray[i] || "";
                 rubyHtml += `
                     <ruby class="flex flex-col items-center mx-1">
                         <rt class="text-lg sm:text-xl text-stone-500 font-sans tracking-normal lowercase mb-2 font-medium">${py}</rt>
@@ -112,22 +109,34 @@ function renderCard() {
             }
             rubyContainer.innerHTML = rubyHtml;
         } else {
-            // 格式三：纯文本时的垫底保护
             rubyContainer.innerHTML = `<span class="font-serif font-bold">${idiomText}</span>`;
         }
     }
 
-    // 2. 渲染反面：释义、翻译、例句
+    // 2. 渲染反面：释义、翻译、例句（支持多命名保护）
     const defZhEl = document.getElementById('card-def-zh');
-    if (defZhEl) defZhEl.innerText = currentIdiom.definition_zh || currentIdiom.meaning || '暂无释义';
+    if (defZhEl) {
+        defZhEl.innerText = currentIdiom.definition_zh || 
+                            currentIdiom.meaning || 
+                            currentIdiom.explanation || 
+                            currentIdiom.desc || 
+                            '暂无释义';
+    }
 
     const defEnEl = document.getElementById('card-def-en');
-    if (defEnEl) defEnEl.innerText = currentIdiom.definition_en || currentIdiom.translation || 'No English translation available.';
+    if (defEnEl) {
+        defEnEl.innerText = currentIdiom.definition_en || 
+                            currentIdiom.translation || 
+                            currentIdiom.explanation_en || 
+                            currentIdiom.meaning_en || 
+                            currentIdiom.english || 
+                            'No English translation available.';
+    }
 
     const exampleEl = document.getElementById('card-example');
     if (exampleEl) {
         const idiomText = currentIdiom.idiom || currentIdiom.word || '';
-        let exampleText = currentIdiom.example || currentIdiom.sentence || '暂无例句。';
+        let exampleText = currentIdiom.example || currentIdiom.sentence || currentIdiom.sample || '暂无例句。';
         if (idiomText && exampleText.includes(idiomText)) {
             exampleText = exampleText.replace(idiomText, `______`);
         }
