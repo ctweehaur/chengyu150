@@ -9,57 +9,56 @@
     <!-- 引入自定义样式 -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-stone-50 min-h-screen font-sans text-stone-800 flex flex-col items-center py-8 px-4">
+<body class="bg-stone-50 min-h-screen font-sans text-stone-800 flex flex-col items-center py-6 px-4">
 
     <!-- 顶部标题区 -->
-    <header class="text-center mb-6">
-        <h1 class="text-3xl font-bold text-stone-800 tracking-wide">常用成语150句</h1>
-        <p id="daily-status" class="text-sm text-stone-400 mt-2 font-medium">每日复习计划（今日 10 句）</p>
+    <header class="text-center mb-4">
+        <h1 class="text-2xl font-bold text-stone-800 tracking-wide">常用成语150句</h1>
+        <p id="daily-status" class="text-xs text-stone-400 mt-1 font-medium">每日复习计划（今日 10 句）</p>
     </header>
 
     <!-- 功能按钮控制区 -->
-    <div class="w-full max-w-lg space-y-3 mb-6">
+    <div class="w-full max-w-lg grid grid-cols-2 gap-3 mb-4">
         <!-- 错题专项训练按钮 -->
-        <button onclick="startWeaknessTraining()" class="w-full bg-white border border-stone-200 py-3.5 px-4 rounded-2xl shadow-sm text-center text-stone-700 font-medium hover:bg-stone-50 transition-all flex items-center justify-center gap-2">
-            🎯 开启错题专项训练 (0)
+        <button onclick="startWeaknessTraining()" class="bg-white border border-stone-200 py-2.5 px-3 rounded-xl shadow-sm text-center text-stone-700 text-sm font-medium hover:bg-stone-50 transition-all flex items-center justify-center gap-2">
+            🎯 错题训练 (0)
         </button>
         
         <!-- Quiz 小测验按钮 -->
-        <button onclick="startQuiz()" class="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-3.5 px-4 rounded-2xl shadow-md font-medium hover:from-amber-600 hover:to-orange-600 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
-            📝 开始成语小测验 (Quiz)
+        <button onclick="startQuiz()" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white py-2.5 px-3 rounded-xl shadow-md text-sm font-medium hover:from-amber-600 hover:to-orange-600 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+            📝 开始小测验 (Quiz)
         </button>
     </div>
 
-    <!-- 核心闪卡容器（支持点击翻转） -->
-    <div id="card-container" class="w-full max-w-lg aspect-[4/5] cursor-pointer mb-6">
-        <div id="flip-card" class="w-full h-full relative duration-500 transform-style-3d">
+    <!-- 核心闪卡容器（缩短了高度，电脑屏幕完美适配） -->
+    <div id="card-container" class="w-full max-w-lg h-[380px] sm:h-[400px] cursor-pointer mb-5">
+        <div id="flip-card" class="w-full h-full relative transform-style-3d">
             
             <!-- 卡片正面：成语与大拼音 -->
-            <div class="absolute inset-0 bg-white rounded-3xl border border-stone-100 shadow-xl shadow-stone-200/50 flex flex-col items-center justify-center p-6 backface-hidden">
-                <div id="card-idiom-ruby" class="flex flex-wrap items-center justify-center text-5xl sm:text-6xl tracking-wide select-none">
-                    <!-- 由 script.js 动态渲染带大拼音的成语 -->
-                    <span class="text-stone-300 text-lg font-sans">加载中...</span>
+            <div class="absolute inset-0 bg-white rounded-2xl border border-stone-100 shadow-xl shadow-stone-200/50 flex flex-col items-center justify-center p-6 backface-hidden">
+                <div id="card-idiom-ruby" class="flex flex-wrap items-center justify-center text-5xl tracking-wide select-none">
+                    <span class="text-stone-300 text-base font-sans">加载中...</span>
                 </div>
             </div>
 
-            <!-- 卡片背面：释义与例句 -->
-            <div class="absolute inset-0 bg-white rounded-3xl border border-stone-100 shadow-xl shadow-stone-200/50 flex flex-col p-8 backface-hidden rotate-y-180 overflow-y-auto">
+            <!-- 卡片背面：紧凑型释义与例句 -->
+            <div class="absolute inset-0 bg-white rounded-2xl border border-stone-100 shadow-xl shadow-stone-200/50 flex flex-col p-6 backface-hidden overflow-hidden">
                 <!-- 中文释义 -->
-                <div class="mb-5 border-l-4 border-amber-600 pl-3">
-                    <span class="block text-xs font-bold uppercase tracking-wider text-amber-700/70 mb-1">【释义】</span>
-                    <p id="card-def-zh" class="text-lg font-medium text-stone-800 leading-relaxed">暂无释义</p>
+                <div class="mb-3.5 border-l-4 border-amber-600 pl-3">
+                    <span class="block text-[10px] font-bold uppercase tracking-wider text-amber-700/70 mb-0.5">【释义】</span>
+                    <p id="card-def-zh" class="text-base font-medium text-stone-800 leading-relaxed">暂无释义</p>
                 </div>
 
                 <!-- 英文翻译 -->
-                <div class="mb-5 border-l-4 border-stone-300 pl-3">
-                    <span class="block text-xs font-bold uppercase tracking-wider text-stone-400 mb-1">【Translation】</span>
-                    <p id="card-def-en" class="text-sm italic text-stone-600 leading-relaxed">No English translation available.</p>
+                <div class="mb-4 border-l-4 border-stone-300 pl-3">
+                    <span class="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-0.5">【Translation】</span>
+                    <p id="card-def-en" class="text-xs italic text-stone-600 leading-relaxed">No English translation available.</p>
                 </div>
 
                 <!-- 例句 -->
-                <div class="mt-auto pt-4 border-t border-stone-100">
-                    <span class="block text-xs font-bold uppercase tracking-wider text-stone-400 mb-1.5">【日常应用】</span>
-                    <p id="card-example" class="text-stone-600 text-sm leading-relaxed bg-stone-50 p-3.5 rounded-xl border border-stone-100">暂无例句。</p>
+                <div class="mt-auto bg-stone-50 p-3 rounded-xl border border-stone-100">
+                    <span class="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">【日常应用】</span>
+                    <p id="card-example" class="text-stone-600 text-xs leading-relaxed">暂无例句。</p>
                 </div>
             </div>
 
@@ -67,57 +66,46 @@
     </div>
 
     <!-- 底部操作与进度反馈 -->
-    <div class="w-full max-w-lg flex flex-col items-center gap-4">
+    <div class="w-full max-w-lg flex flex-col items-center gap-3">
         <!-- 掌握控制按钮 -->
         <div class="w-full grid grid-cols-2 gap-4">
-            <button onclick="markMastery(false)" class="bg-white border-2 border-stone-200 hover:border-red-400 hover:bg-red-50/30 text-stone-700 py-4 px-6 rounded-2xl font-semibold shadow-sm transition-all text-center flex items-center justify-center gap-2">
+            <button onclick="markMastery(false)" class="bg-white border-2 border-stone-200 hover:border-red-400 hover:bg-red-50/30 text-stone-700 py-3 px-6 rounded-xl font-semibold shadow-sm transition-all text-center text-sm flex items-center justify-center gap-2">
                 ❌ 待加强
             </button>
-            <button onclick="markMastery(true)" class="bg-stone-800 hover:bg-stone-900 text-white py-4 px-6 rounded-2xl font-semibold shadow-md transition-all text-center flex items-center justify-center gap-2">
+            <button onclick="markMastery(true)" class="bg-stone-800 hover:bg-stone-900 text-white py-3 px-6 rounded-xl font-semibold shadow-md transition-all text-center text-sm flex items-center justify-center gap-2">
                 ✅ 已掌握
             </button>
         </div>
 
         <!-- 进度条文本 -->
-        <p id="progress-indicator" class="text-xs text-stone-400 font-mono tracking-wider mt-2">进度：0 / 0</p>
+        <p id="progress-indicator" class="text-[11px] text-stone-400 font-mono tracking-wider">进度：0 / 0</p>
     </div>
 
-
-    <!-- ========================================== -->
-    <!-- Quiz 模态弹窗（点击小测验时弹出）            -->
-    <!-- ========================================== -->
+    <!-- Quiz 模态弹窗 -->
     <div id="quiz-modal" class="fixed inset-0 bg-black/40 flex items-center justify-center hidden z-50 p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 relative transform transition-all flex flex-col max-h-[85vh]">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-5 relative flex flex-col max-h-[90vh]">
+            <button onclick="closeQuiz()" class="absolute top-3 right-3 text-stone-400 hover:text-stone-600 text-xl font-bold transition-colors">&times;</button>
             
-            <!-- 关闭按钮 -->
-            <button onclick="closeQuiz()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-600 text-2xl font-bold transition-colors">&times;</button>
-            
-            <!-- 测验进度头部 -->
-            <div class="border-b border-stone-100 pb-3 mb-4">
-                <h3 class="text-lg font-bold text-stone-800 flex items-center gap-1.5">🎯 成语释义挑战</h3>
-                <div class="w-full bg-stone-100 h-2 rounded-full mt-2.5 overflow-hidden">
+            <div class="border-b border-stone-100 pb-2 mb-3">
+                <h3 class="text-base font-bold text-stone-800">🎯 成语释义挑战</h3>
+                <div class="w-full bg-stone-100 h-1.5 rounded-full mt-2 overflow-hidden">
                     <div id="quiz-progress-bar" class="bg-amber-500 h-full transition-all duration-300" style="width: 0%"></div>
                 </div>
-                <p id="quiz-q-num" class="text-xs text-stone-400 mt-1.5 font-mono">题目 1 / 5</p>
+                <p id="quiz-q-num" class="text-[10px] text-stone-400 mt-1 font-mono">题目 1 / 5</p>
             </div>
 
-            <!-- 核心答题区域 -->
-            <div class="flex-1 overflow-y-auto mb-2 pr-1">
+            <div class="flex-1 overflow-y-auto mb-1 pr-1">
                 <div id="quiz-question-container">
-                    <p class="text-stone-400 text-xs mb-1">请选择以下成语的正确含义：</p>
-                    <h4 id="quiz-question-word" class="text-3xl font-serif font-bold text-stone-800 text-center my-5 tracking-wide">-</h4>
-                    
-                    <!-- 动态生成 4 个选项 -->
-                    <div id="quiz-options" class="space-y-3"></div>
+                    <h4 id="quiz-question-word" class="text-2xl font-serif font-bold text-stone-800 text-center my-3 tracking-wide">-</h4>
+                    <div id="quiz-options" class="space-y-2"></div>
                 </div>
                 
-                <!-- 结算页面（默认隐藏） -->
-                <div id="quiz-result-container" class="hidden text-center py-8">
-                    <span class="text-5xl block animate-bounce">🏆</span>
-                    <h4 class="text-2xl font-bold text-stone-800 mt-4">测验圆满结束！</h4>
-                    <p id="quiz-score" class="text-4xl font-black text-amber-600 my-4">0 / 5</p>
-                    <p id="quiz-eval" class="text-sm text-stone-500 mb-6 px-4">完成得不错！</p>
-                    <button onclick="startQuiz()" class="w-full py-3.5 bg-stone-800 text-white rounded-xl font-medium hover:bg-stone-900 transition-colors shadow-sm">
+                <div id="quiz-result-container" class="hidden text-center py-6">
+                    <span class="text-4xl block animate-bounce">🏆</span>
+                    <h4 class="text-xl font-bold text-stone-800 mt-3">测验圆满结束！</h4>
+                    <p id="quiz-score" class="text-3xl font-black text-amber-600 my-3">0 / 5</p>
+                    <p id="quiz-eval" class="text-xs text-stone-500 mb-5 px-4">完成得不错！</p>
+                    <button onclick="startQuiz()" class="w-full py-2.5 bg-stone-800 text-white rounded-xl text-sm font-medium hover:bg-stone-900 transition-colors">
                         再考一次
                     </button>
                 </div>
@@ -125,7 +113,7 @@
         </div>
     </div>
 
-    <!-- 顺序引入数据源与核心脚本 -->
+    <!-- 数据源与核心脚本 -->
     <script src="data.js"></script>
     <script src="script.js"></script>
 </body>
