@@ -1,123 +1,233 @@
-// --- 全局状态 ---
-let idioms = allIdioms; // 来自 data.js
-let masteredIdioms = JSON.parse(localStorage.getItem('masteredIdioms')) || [];
-let wrongIdioms = JSON.parse(localStorage.getItem('wrongIdioms')) || [];
+// ==========================================
+// 1. 初始化变量与状态管理
+// ==========================================
+let currentPlan = [];       // 今日学习的成语队列
+let currentIndex = 0;       // 当前学习的成语索引
+let isFlipped = false;      // 卡片是否翻转
+let isWeaknessMode = false;  // 是否处于错题专项训练模式
 
-// --- 初始化每日计划 ---
-function getDailyPlan() {
-    const today = new Date().toDateString();
-    let plan = JSON.parse(localStorage.getItem('dailyPlan'));
-    if (!plan || plan.date !== today) {
-        let shuffled = [...idioms].sort(() => 0.5 - Math.random());
-        plan = { date: today, list: shuffled.slice(0, 10) };
-        localStorage.setItem('dailyPlan', JSON.stringify(plan));
-    }
-    return plan.list;
+// 检查数据源是否存在
+if (typeof allIdioms === 'undefined') {
+    console.error("错误：未找到成语数据，请检查 data.js 是否正确引入！");
 }
 
-const currentPlan = getDailyPlan();
-let currentIndex = 0;
+// ==========================================
+// 2. 核心初始化函数
+// ==========================================
+function initApp() {
+    try {
+        const savedProgress = localStorage.getItem('chengyu_progress');
+        const todayStr = new Date().toDateString();
+        
+        // 读取错题库（待加强项）
+        let wrongList = JSON.parse(localStorage.getItem('chengyu_wrong_list')) || [];
+        updateWeaknessButton(wrongList.length);
 
-// --- 翻转逻辑 ---
-function toggleCard(element) { element.classList.toggle('flipped'); }
+        // 如果是新的一天，或者没有今日计划，则重新生成 10 条
+        if (!savedProgress || JSON.parse(savedProgress).date !== todayStr) {
+            // 随机抽取 10 条成语
+            const shuffled = [...allIdioms].sort(() => 0.5 - Math.random());
+            currentPlan = shuffled.slice(0, 10);
+            
+            localStorage.setItem('chengyu_progress', JSON.stringify({
+                date: todayStr,
+                plan: currentPlan,
+                index: 0
+            }));
+            currentIndex = 0;
+        } else {
+            // 读取已有的今日计划
+            const progressData = JSON.parse(savedProgress);
+            currentPlan = progressData.plan;
+            currentIndex = progressData.index;
+        }
 
-// --- 标记进度 ---
-function markStatus(status) {
-    const idiom = currentPlan[currentIndex];
-    if (status === 'mastered') {
-        if (!masteredIdioms.includes(idiom.id)) masteredIdioms.push(idiom.id);
-        wrongIdioms = wrongIdioms.filter(id => id !== idiom.id);
-    } else {
-        if (!wrongIdioms.includes(idiom.id)) wrongIdioms.push(idiom.id);
-        masteredIdioms = masteredIdioms.filter(id => id !== idiom.id);
-    }
-    localStorage.setItem('masteredIdioms', JSON.stringify(masteredIdioms));
-    localStorage.setItem('wrongIdioms', JSON.stringify(wrongIdioms));
-    
-    if (currentIndex < currentPlan.length - 1) {
-        currentIndex++;
+        isWeaknessMode = false;
+        
+        // 更新头部状态文本
+        const statusEl = document.getElementById('daily-status');
+        if (statusEl) statusEl.innerText = "每日复习计划（今日 10 句）";
+
+        // 绑定卡片点击翻转事件
+        setupFlipEvent();
+        
+        // 渲染第一张卡片
         renderCard();
-    } else {
-        showReviewReport();
+    } catch (error) {
+        console.error("初始化失败:", error);
+        document.getElementById('daily-status').innerText = "系统初始化异常，请刷新重试";
     }
 }
 
-// --- 错题专项训练模式 ---
-function startWeaknessTraining() {
-    const trainingList = idioms.filter(i => wrongIdioms.includes(i.id));
-    if (trainingList.length === 0) { alert("太棒了！目前没有错题需要复习。"); return; }
-    
-    let tIndex = 0;
-    const container = document.querySelector('.card-container');
-    
-    function renderTraining() {
-        const idiom = trainingList[tIndex];
-        container.innerHTML = `
-            <div class="card" onclick="toggleCard(this)">
-                <div class="front">专项复习: <ruby>${idiom.idiom}<rt>${idiom.pinyin}</rt></ruby></div>
-                <div class="back">
-                    <div class="def-zh">${idiom.meaning}</div>
-                    <div class="example">例句：${idiom.example}</div>
-                </div>
-            </div>
-            <button onclick="clearWrong('${idiom.id}')">我已掌握该词</button>
-            <p>专项进度: ${tIndex + 1} / ${trainingList.length}</p>
-        `;
-    }
-
-    window.clearWrong = (id) => {
-        wrongIdioms = wrongIdioms.filter(i => i !== id);
-        localStorage.setItem('wrongIdioms', JSON.stringify(wrongIdioms));
-        tIndex++;
-        if (tIndex < trainingList.length) renderTraining();
-        else { alert("恭喜！错题已全部消化！"); location.reload(); }
-    };
-    renderTraining();
-}
-
-// --- 导出与报告 ---
-function showReviewReport() {
-    const container = document.querySelector('.card-container');
-    const wrongList = idioms.filter(i => wrongIdioms.includes(i.id));
-    container.innerHTML = `
-        <div class="report-box">
-            <h2>复习报告</h2>
-            <p>错题总数: ${wrongList.length}</p>
-            <button onclick="exportReport()">导出错题清单</button>
-            <button onclick="location.reload()">重新开始</button>
-        </div>
-    `;
-}
-
-function exportReport() {
-    const wrongList = idioms.filter(i => wrongIdioms.includes(i.id));
-    const content = wrongList.map(i => `${i.idiom}: ${i.meaning}`).join('\n');
-    const blob = new Blob([content], { type: 'text/plain' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = '错题复盘.txt';
-    a.click();
-}
-
-// --- 初始渲染 ---
+// ==========================================
+// 3. 卡片渲染与翻转逻辑
+// ==========================================
 function renderCard() {
-    const idiom = currentPlan[currentIndex];
-    document.querySelector('.card-container').innerHTML = `
-        <div class="card" onclick="toggleCard(this)">
-            <div class="front"><ruby>${idiom.idiom}<rt>${idiom.pinyin}</rt></ruby></div>
-            <div class="back">
-                <div class="def-header">释义</div>
-                <div class="def-zh">${idiom.meaning}</div>
-                <div class="def-en">${idiom.english}</div>
-                <div class="example">例句：${idiom.example}</div>
-            </div>
-        </div>
-        <div class="controls">
-            <button onclick="markStatus('mastered')">掌握</button>
-            <button onclick="markStatus('wrong')">未掌握</button>
-        </div>
-        <p>进度: ${currentIndex + 1} / ${currentPlan.length}</p>
-    `;
+    if (currentPlan.length === 0) {
+        showEmptyState();
+        return;
+    }
+
+    // 确保索引不越界
+    if (currentIndex >= currentPlan.length) {
+        currentIndex = 0; 
+    }
+
+    const currentIdiom = currentPlan[currentIndex];
+    
+    // 重置卡片状态为正面
+    const flipCardEl = document.getElementById('flip-card');
+    if (flipCardEl) flipCardEl.classList.remove('rotate-y-180');
+    isFlipped = false;
+
+    // 1. 渲染正面：拼音注音 (Ruby)
+    const rubyContainer = document.getElementById('card-idiom-ruby');
+    if (rubyContainer && currentIdiom.characters) {
+        rubyContainer.innerHTML = currentIdiom.characters.map(char => `
+            <ruby class="flex flex-col items-center">
+                <rt class="text-[10px] sm:text-xs text-stone-400 font-sans tracking-normal lowercase mb-1">${char.pinyin}</rt>
+                <span class="font-serif font-bold">${char.char}</span>
+            </ruby>
+        `).join('');
+    }
+
+    // 2. 渲染反面：释义、翻译、例句
+    const defZhEl = document.getElementById('card-def-zh');
+    if (defZhEl) defZhEl.innerText = currentIdiom.definition_zh || '暂无释义';
+
+    const defEnEl = document.getElementById('card-def-en');
+    if (defEnEl) defEnEl.innerText = currentIdiom.definition_en || 'No English translation available.';
+
+    const exampleEl = document.getElementById('card-example');
+    if (exampleEl) {
+        // 例句成语挖空处理
+        const idiomText = currentIdiom.idiom;
+        let exampleText = currentIdiom.example || '暂无例句。';
+        if (idiomText && exampleText.includes(idiomText)) {
+            exampleText = exampleText.replace(idiomText, `______`);
+        }
+        exampleEl.innerText = exampleText;
+    }
+
+    // 3. 更新底部进度指示器
+    const progressEl = document.getElementById('progress-indicator');
+    if (progressEl) {
+        progressEl.innerText = `进度：${currentIndex + 1} / ${currentPlan.length} ${isWeaknessMode ? '（错题训练中）' : ''}`;
+    }
 }
 
-renderCard();
+// 绑定卡片翻转
+function setupFlipEvent() {
+    const container = document.getElementById('card-container');
+    const flipCardEl = document.getElementById('flip-card');
+    
+    if (container && flipCardEl) {
+        // 移除旧事件防止重复绑定
+        container.onclick = null;
+        container.onclick = function() {
+            isFlipped = !isFlipped;
+            if (isFlipped) {
+                flipCardEl.classList.add('rotate-y-180');
+            } else {
+                flipCardEl.classList.remove('rotate-y-180');
+            }
+        };
+    }
+}
+
+// ==========================================
+// 4. 掌握 / 待加强 按钮交互
+// ==========================================
+function markMastery(isMastered) {
+    if (currentPlan.length === 0) return;
+
+    const currentIdiom = currentPlan[currentIndex];
+    let wrongList = JSON.parse(localStorage.getItem('chengyu_wrong_list')) || [];
+
+    if (!isMastered) {
+        // 点击“待加强”：如果错题库里没有，就加进去
+        if (!wrongList.some(item => item.idiom === currentIdiom.idiom)) {
+            wrongList.push(currentIdiom);
+        }
+    } else {
+        // 点击“已掌握”：如果错题库里有，就移除它（移出集训）
+        wrongList = wrongList.filter(item => item.idiom !== currentIdiom.idiom);
+    }
+
+    // 保存错题库状态
+    localStorage.setItem('chengyu_wrong_list', JSON.stringify(wrongList));
+    updateWeaknessButton(wrongList.length);
+
+    // 切换到下一张
+    currentIndex++;
+    
+    if (currentIndex >= currentPlan.length) {
+        if (isWeaknessMode) {
+            alert("🎉 太棒了！本轮错题专项训练已完成！");
+            initApp(); // 返回常规每日模式
+            return;
+        } else {
+            alert("🎉 今日 10 个成语已全部浏览完毕！");
+            // 记录今日完成状态
+            const savedProgress = JSON.parse(localStorage.getItem('chengyu_progress'));
+            savedProgress.index = currentIndex;
+            localStorage.setItem('chengyu_progress', JSON.stringify(savedProgress));
+            currentIndex = currentPlan.length - 1; // 停留在最后一张
+        }
+    } else if (!isWeaknessMode) {
+        // 常规模式下，实时保存当前看到第几张卡片
+        const savedProgress = JSON.parse(localStorage.getItem('chengyu_progress'));
+        if (savedProgress) {
+            savedProgress.index = currentIndex;
+            localStorage.setItem('chengyu_progress', JSON.stringify(savedProgress));
+        }
+    }
+
+    renderCard();
+}
+
+// ==========================================
+// 5. 错题专项训练模式逻辑
+// ==========================================
+function startWeaknessTraining() {
+    const wrongList = JSON.parse(localStorage.getItem('chengyu_wrong_list')) || [];
+    
+    if (wrongList.length === 0) {
+        alert("✨ 赞！当前没有待加强的成语，快去学习新词吧！");
+        return;
+    }
+
+    isWeaknessMode = true;
+    currentPlan = [...wrongList].sort(() => 0.5 - Math.random()); // 打乱错题顺序
+    currentIndex = 0;
+
+    const statusEl = document.getElementById('daily-status');
+    if (statusEl) statusEl.innerText = `🎯 错题专项集训中（共 ${currentPlan.length} 词）`;
+
+    renderCard();
+}
+
+// 更新错题按钮上的数字提示
+function updateWeaknessButton(count) {
+    const btn = document.querySelector('button[onclick="startWeaknessTraining()"]');
+    if (btn) {
+        btn.innerHTML = `🎯 开启错题专项训练 (<span class="text-amber-600 font-bold">${count}</span>)`;
+    }
+}
+
+// 当计划内无词时的显示状态
+function showEmptyState() {
+    const rubyContainer = document.getElementById('card-idiom-ruby');
+    if (rubyContainer) rubyContainer.innerHTML = `<span class="text-base text-stone-400">今日暂无成语任务</span>`;
+    
+    const defZhEl = document.getElementById('card-def-zh');
+    if (defZhEl) defZhEl.innerText = '-';
+    
+    const progressEl = document.getElementById('progress-indicator');
+    if (progressEl) progressEl.innerText = '进度：0 / 0';
+}
+
+// ==========================================
+// 6. 页面加载完毕后自动运行
+// ==========================================
+window.onload = initApp;
