@@ -220,7 +220,6 @@ const studyIdioms = [
     },
     {
         idiom: "应付了事",
-        pinyin: "yìng fù liǎo饰",
         pinyin: "yìng fù liǎo shì",
         defZh: "做事马虎不认真，仅仅应付一下就算完成。",
         defEn: "Muddle through a task; doing work perfunctorily.",
