@@ -16,6 +16,7 @@ const speechIdioms = [
         pinyin: "míng zhèng yán shùn",
         defZh: "名义正当，做事或说话顺理成章，理由非常充足。",
         defEn: "Perfectly justifiable; reasonable and normal.",
+        defBm: "Mempunyai alasan yang sah, munasabah dan diterima secara rasmi.",
         example: "他经过了考核竞选，名正言顺地当上了学长团团长。",
         category: "说话寓理"
     },
