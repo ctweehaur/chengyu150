@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>常用成语150句</title>
+    <title>常用成语200句</title>
     <!-- Tailwind CSS Engine -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts for premium Chinese Serif & English Inter layout -->
@@ -12,29 +12,29 @@
     <style>
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: #f6f5f2; /* Morandi neutral pale gray to prevent eye strain */
+            background-color: #f6f5f2; /* 护眼莫兰迪柔灰色 */
             color: #4a4540; 
-            -webkit-tap-highlight-color: transparent; /* Clean up tap highlights on mobile viewports */
+            -webkit-tap-highlight-color: transparent; /* 清除移动端点击高亮 */
         }
         .chengyu-title { 
             font-family: 'Noto Serif SC', serif; 
         }
         
-        /* Ruby Annotation Layout for accurate Chinese phonetic alignment above characters */
+        /* 拼音标注样式：拼音完美居中对齐在汉字正上方 */
         ruby {
             ruby-position: over;
             ruby-align: center;
         }
         rt {
             font-family: 'Inter', sans-serif;
-            font-size: 0.42em; /* Meticulously scaled down to sit comfortably above text */
-            color: #8c8275;   /* Sophisticated neutral grey color */
+            font-size: 0.42em; /* 精确控制拼音大小 */
+            color: #8c8275;   /* 柔和灰色拼音 */
             letter-spacing: 0.1em;
             padding-bottom: 0.35em;
             user-select: none;
         }
 
-        /* 3D Flipping Transform Engine & Card Perspective Config */
+        /* 3D 卡片翻转核心动画样式 */
         #card-container { 
             perspective: 1200px; 
         }
@@ -54,12 +54,12 @@
             transform: rotateY(180deg); 
         }
         
-        /* Preserving spatial orientation: prevents mirror text on card back */
+        /* 负负得正：当整个卡片座旋转 180 度时，背面自动正过来，防止镜像倒转 */
         #flip-card > div:nth-child(2) {
             transform: rotateY(180deg);
         }
         
-        /* Disabled element style transitions */
+        /* 选项被禁用时的样式 */
         button:disabled {
             cursor: not-allowed;
             opacity: 0.85;
@@ -70,14 +70,15 @@
 
     <div id="app" class="w-full max-w-lg pt-4 flex flex-col">
         <header class="text-center mb-4">
-            <h1 class="text-2xl font-bold text-stone-700 tracking-wide chengyu-title">常用成语150句</h1>
-            <!-- Gamification Dashboard Progress Bar -->
+            <h1 class="text-2xl font-bold text-stone-700 tracking-wide chengyu-title">常用成语200句</h1>
+            <!-- 掌握度进度条（Gamification 仪表盘） -->
             <div class="mt-3 bg-stone-200/60 rounded-full h-2 w-full overflow-hidden flex">
                 <div id="mastery-progress-bar" class="bg-emerald-500 h-full transition-all duration-500" style="width: 0%"></div>
             </div>
-            <p id="mastery-status" class="text-[10px] text-stone-400 mt-1.5 font-mono tracking-wider">已掌握 0 / 150 词 (0%)</p>
+            <p id="mastery-status" class="text-[10px] text-stone-400 mt-1.5 font-mono tracking-wider">已掌握 0 / 200 词 (0%)</p>
         </header>
 
+        <!-- 分类筛选导航栏：升级为 8 大核心类别 -->
         <nav class="flex gap-1.5 flex-wrap justify-center mb-4" id="filterNav">
             <button class="px-3 py-1 bg-white border border-stone-200 hover:border-stone-400 hover:bg-stone-50 text-stone-600 text-xs rounded-full transition-all active" onclick="filterCategory('全部')">全部</button>
             <button class="px-3 py-1 bg-white border border-stone-200 hover:border-stone-400 hover:bg-stone-50 text-stone-600 text-xs rounded-full transition-all" onclick="filterCategory('人物神态')">🎭 人物神态</button>
@@ -86,15 +87,17 @@
             <button class="px-3 py-1 bg-white border border-stone-200 hover:border-stone-400 hover:bg-stone-50 text-stone-600 text-xs rounded-full transition-all" onclick="filterCategory('品格人际')">🤝 品格人际</button>
             <button class="px-3 py-1 bg-white border border-stone-200 hover:border-stone-400 hover:bg-stone-50 text-stone-600 text-xs rounded-full transition-all" onclick="filterCategory('环境自然')">🏞️ 环境自然</button>
             <button class="px-3 py-1 bg-white border border-stone-200 hover:border-stone-400 hover:bg-stone-50 text-stone-600 text-xs rounded-full transition-all" onclick="filterCategory('说话寓理')">💬 说话寓理</button>
+            <button class="px-3 py-1 bg-white border border-stone-200 hover:border-stone-400 hover:bg-stone-50 text-stone-600 text-xs rounded-full transition-all" onclick="filterCategory('见识谋略')">💡 见识谋略</button>
+            <button class="px-3 py-1 bg-white border border-stone-200 hover:border-stone-400 hover:bg-stone-50 text-stone-600 text-xs rounded-full transition-all" onclick="filterCategory('局势成败')">🔥 局势成败</button>
         </nav>
 
         <div class="grid grid-cols-2 gap-3 mb-4">
-            <!-- Dedicated Wrong Answers Review Mode -->
+            <!-- 错题专项训练 -->
             <button onclick="startWeaknessTraining()" class="bg-white border border-stone-200 py-3 px-2 rounded-xl shadow-sm text-center text-stone-700 text-xs font-semibold hover:bg-stone-50 transition-all flex items-center justify-center gap-1.5">
                 🎯 错题训练 (0)
             </button>
             
-            <!-- Contextual Learning Quiz Trigger -->
+            <!-- Quiz 小测验 -->
             <button onclick="startQuiz()" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white py-3 px-2 rounded-xl shadow-md text-xs font-semibold hover:from-amber-600 hover:to-orange-600 transition-all flex items-center justify-center gap-1.5">
                 📝 开始小测验
             </button>
@@ -103,20 +106,20 @@
         <div id="card-container" class="w-full h-[380px] sm:h-[400px] cursor-pointer mb-4 relative">
             <div id="flip-card" class="w-full h-full relative transform-style-3d">
                 
-                <!-- Card Front View: Giant Characters & Pinyin Ruby Layout -->
+                <!-- 卡片正面：成语与大拼音 -->
                 <div class="absolute inset-0 bg-white rounded-2xl border border-stone-100 shadow-xl shadow-stone-200/50 flex flex-col items-center justify-center p-6 backface-hidden">
                     <div id="card-idiom-ruby" class="chengyu-title flex flex-wrap items-center justify-center text-5xl sm:text-6xl tracking-wide select-none">
-                        <!-- Generative Ruby templates populated via JavaScript logic -->
+                        <!-- 由 JavaScript 动态生成带拼音的汉字 -->
                     </div>
                 </div>
 
-                <!-- Card Back View: Balanced translations with complimentary sky and rose palettes -->
+                <!-- 卡片反面：双栏翻译 + 大字号例句 -->
                 <div class="absolute inset-0 bg-orange-50/40 rounded-2xl border-2 border-orange-100/60 shadow-xl shadow-stone-200/50 flex flex-col p-5 backface-hidden overflow-hidden">
-                    <!-- Elegant classical margin borders -->
+                    <!-- 内层典雅细线框 -->
                     <div class="absolute inset-2 border border-amber-900/5 rounded-xl pointer-events-none"></div>
 
                     <div class="relative z-10 flex flex-col justify-between h-full py-0.5">
-                        <!-- Mandarin definitions -->
+                        <!-- 中文释义区块 -->
                         <div>
                             <div class="inline-flex items-center gap-1 bg-amber-700/10 text-amber-800 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md mb-1.5">
                                 <span>华文释义</span>
@@ -124,16 +127,16 @@
                             <p id="card-def-zh" class="text-[15px] font-semibold text-stone-800 leading-relaxed pl-1">暂无释义</p>
                         </div>
 
-                        <!-- Translation Grid: English (Cool Sky Blue) and Melayu (Warm Rose Pink) -->
+                        <!-- 翻译双栏区块（左英文，右国文） -->
                         <div class="grid grid-cols-2 gap-3 border-t border-b border-amber-900/5 py-2.5 my-1">
-                            <!-- English Translation Column -->
+                            <!-- 英文翻译 -->
                             <div>
                                 <div class="inline-flex items-center gap-1 bg-sky-100/60 text-sky-800 text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded mb-1">
                                     <span>ENGLISH</span>
                                 </div>
                                 <p id="card-def-en" class="text-[11px] italic text-sky-900/70 leading-snug pl-0.5">No translation.</p>
                             </div>
-                            <!-- Bahasa Melayu Translation Column -->
+                            <!-- 马来文翻译 -->
                             <div>
                                 <div class="inline-flex items-center gap-1 bg-rose-100/60 text-rose-800 text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded mb-1">
                                     <span>MELAYU / PERIBAHASA</span>
@@ -142,7 +145,7 @@
                             </div>
                         </div>
 
-                        <!-- Exemplary Context Sentence (13px Font Optimization) -->
+                        <!-- 例句区块（字号13px） -->
                         <div class="bg-white/80 border border-amber-950/5 p-3.5 rounded-xl shadow-sm">
                             <div class="inline-flex items-center gap-1 bg-amber-900/5 text-amber-900/70 text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded mb-1.5">
                                 <span>例句</span>
@@ -158,21 +161,22 @@
         <div class="w-full flex flex-col items-center gap-3">
             <div class="grid grid-cols-2 gap-4 w-full">
                 <button onclick="markMastery(false)" class="bg-white border-2 border-stone-200 hover:border-red-400 hover:bg-red-50/30 text-stone-700 py-3 px-6 rounded-xl font-semibold shadow-sm transition-all text-center text-sm flex items-center justify-center gap-2">
-                    ❌ 再复习
+                    ❌ 待加强
                 </button>
                 <button onclick="markMastery(true)" class="bg-stone-800 hover:bg-stone-900 text-white py-3 px-6 rounded-xl font-semibold shadow-md transition-all text-center text-sm flex items-center justify-center gap-2">
                     ✅ 已掌握
                 </button>
             </div>
 
-            <!-- Page progress indicators -->
+            <!-- 进度条文本 -->
             <p id="progress-indicator" class="text-[11px] text-stone-400 font-mono tracking-wider">进度：0 / 0</p>
         </div>
     </div>
 
-    <!-- Floating notifications popups zone -->
+    <!-- 弹出的气泡消息通知盒 -->
     <div id="toast-container" class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
+    <!-- 智能测验视窗 -->
     <div id="quiz-modal" class="fixed inset-0 bg-black/40 flex items-center justify-center hidden z-50 p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-5 relative flex flex-col max-h-[90vh]">
             <button onclick="closeQuiz()" class="absolute top-3 right-3 text-stone-400 hover:text-stone-600 text-xl font-bold transition-colors">&times;</button>
@@ -191,7 +195,7 @@
                     <div id="quiz-options" class="space-y-2"></div>
                 </div>
                 
-                <!-- Post-Quiz Assessment Summary -->
+                <!-- 测验结算报告 -->
                 <div id="quiz-result-container" class="hidden text-center py-6">
                     <span class="text-4xl block animate-bounce">🏆</span>
                     <h4 class="text-xl font-bold text-stone-800 mt-3">测验圆满结束！</h4>
@@ -214,9 +218,12 @@
     <script src="data-relationship.js"></script>
     <script src="data-environment.js"></script>
     <script src="data-speech.js"></script>
+    <!-- 新增的两份成语库 -->
+    <script src="data-wisdom.js"></script>
+    <script src="data-situation.js"></script>
 
     <!-- ==========================================
-         🧬 主数据合并与展开
+         🧬 主数据合并与展开 (适配 200 句成语)
          ========================================== -->
     <script>
         const allIdioms = [
@@ -225,27 +232,28 @@
             ...(typeof studyIdioms !== 'undefined' ? studyIdioms : []),
             ...(typeof relationshipIdioms !== 'undefined' ? relationshipIdioms : []),
             ...(typeof environmentIdioms !== 'undefined' ? environmentIdioms : []),
-            ...(typeof speechIdioms !== 'undefined' ? speechIdioms : [])
+            ...(typeof speechIdioms !== 'undefined' ? speechIdioms : []),
+            ...(typeof wisdomIdioms !== 'undefined' ? wisdomIdioms : []),
+            ...(typeof situationIdioms !== 'undefined' ? situationIdioms : [])
         ];
     </script>
 
     <!-- ==========================================
-         🎮 核心交互逻辑与运行控制层
+         🎮 核心交互逻辑控制层 (适配 200 句)
          ========================================== -->
     <script>
-        let currentPlan = [];       // Primary learning idioms queue
-        let currentIndex = 0;       // Current idiom active index pointer
-        let isFlipped = false;      // Interactive 3D flip card toggle state
-        let isWeaknessMode = false;  // Weakness training mode flag (targeted wrong terms review)
-        let activeCategory = '全部'; // Selected active navigation filtering category
-        
-        // Adaptive Quiz system modules
+        let currentPlan = [];       // 当前分类下的数据计划队列
+        let currentIndex = 0;       // 指针
+        let isFlipped = false;      // 正反翻转状态
+        let isWeaknessMode = false;  // 是否开启错题模式
+        let activeCategory = '全部'; // 活动分类
+
+        // 测验系统
         let quizQuestions = [];     
         let quizCurrentIndex = 0;   
         let quizScore = 0;          
         const QUIZ_TOTAL = 10;      
 
-        // Formatting HTML ruby annotations
         function generateRubyMarkup(idiom, pinyinStr) {
             const chars = idiom.split('');
             const pinyins = pinyinStr.split(' ');
@@ -257,6 +265,7 @@
             return html;
         }
 
+        // 页面生命周期初始化
         function initApp() {
             try {
                 let wrongList = JSON.parse(localStorage.getItem('chengyu_wrong_list')) || [];
@@ -267,7 +276,7 @@
                 renderCard();
                 updateMasteryProgress();
             } catch (error) {
-                console.error("Initialization error:", error);
+                console.error("初始化加载错误:", error);
             }
         }
 
@@ -292,13 +301,13 @@
             if (flipCardEl) flipCardEl.classList.remove('rotate-y-180');
             isFlipped = false;
 
-            // 1. Render front card with aligned phonetics
+            // 1. 渲染正面注音
             const rubyContainer = document.getElementById('card-idiom-ruby');
             if (rubyContainer) {
                 rubyContainer.innerHTML = generateRubyMarkup(currentIdiom.idiom, currentIdiom.pinyin);
             }
 
-            // 2. Render back card (with aligned Trilingual fields)
+            // 2. 渲染反面三语翻译
             document.getElementById('card-def-zh').innerText = currentIdiom.defZh || '暂无释义';
             document.getElementById('card-def-en').innerText = currentIdiom.defEn || 'No translation available.';
             document.getElementById('card-def-bm').innerText = currentIdiom.defBm || 'Tiada terjemahan.';
@@ -308,13 +317,13 @@
                 const idiomText = currentIdiom.idiom || '';
                 let exampleText = currentIdiom.example || '暂无例句。';
                 if (idiomText && exampleText.includes(idiomText)) {
-                    // Highlight target phrase slightly using formatting without disturbing layout
+                    // 使用空白横线替代例句中的核心词
                     exampleText = exampleText.replace(idiomText, ` ______ `);
                 }
                 exampleEl.innerText = exampleText;
             }
 
-            // 3. Update current progress trackers
+            // 3. 更新页脚指示文本
             const progressEl = document.getElementById('progress-indicator');
             if (progressEl) {
                 progressEl.innerText = `进度：${currentIndex + 1} / ${currentPlan.length} ${isWeaknessMode ? '（错题训练中）' : ''}`;
@@ -456,11 +465,11 @@
 
             const shuffled = [...quizSource].sort(() => 0.5 - Math.random());
             
-            // Generate up to QUIZ_TOTAL (10) randomized cards
+            // 每次固定 10 题（如果当前类目不足10题，则有多少考多少）
             const actualTotal = Math.min(QUIZ_TOTAL, quizSource.length);
             quizQuestions = shuffled.slice(0, actualTotal);
             
-            // Randomly assign one of 3 teaching formats to each generated question
+            // 为每道题随机分配三种题型之一
             quizQuestions = quizQuestions.map(q => {
                 return {
                     ...q,
@@ -497,7 +506,7 @@
             const optionsContainer = document.getElementById('quiz-options');
 
             if (currentQ.qType === 0) {
-                // 【Type 0】: Match definition given the character term
+                // 【Type 0】：看词猜意
                 questionWordEl.innerHTML = `<span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-sans font-medium">看词猜意</span><br>${currentQ.idiom}`;
                 
                 optionsContainer.innerHTML = options.map(opt => {
@@ -510,7 +519,7 @@
                 }).join('');
 
             } else if (currentQ.qType === 1) {
-                // 【Type 1】: Match character term given definition explanation
+                // 【Type 1】：根据释义选词
                 questionWordEl.innerHTML = `<span class="text-[10px] bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-sans font-medium block w-max mx-auto mb-2">根据释义选成语</span><p class="text-base font-medium font-sans px-4 text-stone-700 leading-relaxed text-left">${currentQ.defZh}</p>`;
                 
                 optionsContainer.innerHTML = options.map(opt => {
@@ -523,7 +532,7 @@
                 }).join('');
 
             } else if (currentQ.qType === 2) {
-                // 【Type 2】: Fill in the blank sentence contexts
+                // 【Type 2】：语境例句填空
                 let exampleText = currentQ.example || '暂无例句。';
                 if (currentQ.idiom && exampleText.includes(currentQ.idiom)) {
                     exampleText = exampleText.replace(currentQ.idiom, ` ______ `);
@@ -560,7 +569,7 @@
                     }
                 });
 
-                // Auto write failed answers into active local storage weaknesses queue
+                // 答错的成语自动写入本地错题库
                 let wrongList = JSON.parse(localStorage.getItem('chengyu_wrong_list')) || [];
                 const currentQ = quizQuestions[quizCurrentIndex];
                 if (!wrongList.some(item => item.idiom === currentQ.idiom)) {
@@ -571,7 +580,6 @@
                 }
             }
 
-            // Comfortable reading buffer before proceeding
             setTimeout(() => {
                 quizCurrentIndex++;
                 if (quizCurrentIndex < quizQuestions.length) {
@@ -600,7 +608,7 @@
             document.getElementById('quiz-eval').innerText = evaluation;
         }
 
-        // Window life-cycle load bind
+        // 窗口预载
         window.onload = function() {
             initApp();
             filterCategory('全部');
