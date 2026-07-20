@@ -4,7 +4,7 @@
 const studyIdioms = [
     {
         idiom: "一丝不苟",
-        pinyin: "yī sī bù gǒu",
+        pinyin: "yì sī bù gǒu",
         defZh: "形容办事极其认真，哪怕是一点细小的地方也绝不马虎。",
         defEn: "Extremely meticulous and conscientious.",
         defBm: "Sangat teliti dan cermat dalam melakukan kerja.",
@@ -184,7 +184,7 @@ const studyIdioms = [
     },
     {
         idiom: "一窍不通",
-        pinyin: "yī qiào bù tōng",
+        pinyin: "yí qiào bù tōng",
         defZh: "比喻对某门知识或某项技术完全不懂。",
         defEn: "Know absolutely nothing about a subject; clueless.",
         defBm: "Tidak tahu apa-apa langsung tentang sesuatu perkara.",
