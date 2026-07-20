@@ -76,7 +76,7 @@ const speechIdioms = [
     },
     {
         idiom: "直言不讳",
-        pinyin: "zhí yán bù huì",
+        pinyin: "zhí yán bú huì",
         defZh: "说话直截了当，没有任何隐瞒和顾忌。",
         defEn: "Speaking frankly without any reservation.",
         defBm: "Bercakap secara berterus-terang tanpa menyembunyikan kebenaran.",
@@ -103,7 +103,7 @@ const speechIdioms = [
     },
     {
         idiom: "一针见血",
-        pinyin: "yī zhēn jiàn xiě",
+        pinyin: "yì zhēn jiàn xiě",
         defZh: "比喻说话或写文章能直截了当，切中核心要害。",
         defEn: "Hit the nail on the head; direct and precise.",
         defBm: "Bercakap secara tepat dan terus-terang mengenai isi penting.",
@@ -148,7 +148,7 @@ const speechIdioms = [
     },
     {
         idiom: "千篇一律",
-        pinyin: "qiān piān yī lǜ",
+        pinyin: "qiān piān yí lǜ",
         defZh: "形容文章或事物形式单一，一成不变，没有新意和变化。",
         defEn: "Stereotyped; repetitive and monotonous.",
         defBm: "Sesuatu yang membosankan, tidak kreatif dan sentiasa sama.",
@@ -166,7 +166,7 @@ const speechIdioms = [
     },
     {
         idiom: "言行一致",
-        pinyin: "yán xíng yī zhì",
+        pinyin: "yán xíng yí zhì",
         defZh: "说的话和做的事完全相同。形容人说话算话、讲信用。",
         defEn: "Matching one's words with deeds; honest.",
         defBm: "Cakap serupa bikin (berpegang pada janji).",
